@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>todos</title>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>todos</h1>
+      </header>
+
+      <div class="app">
+        <form id="todo-form">
+          <label for="todo-text">Todo text:</label>
+          <input type="text" id="todo-text" />
+          <button type="submit" class="btn">ADD</button>
+        </form>
+
+        <ul id="todo-list" class="todo-list">
+          <li class="todo-list-item" data-todo_id="1">
+            <div class="todo">
+              <input type="checkbox" id="1" class="checkbox" />
+              <label for="1">Lorem ipsum dolor sit amet.</label>
+            </div>
+            <button class="delete-btn">X</button>
+          </li>
+          <li class="todo-list-item" data-todo_id="2">
+            <div class="todo">
+              <input type="checkbox" id="2" class="checkbox" />
+              <label for="2">Lorem ipsum dolor sit amet.</label>
+            </div>
+            <button class="delete-btn">X</button>
+          </li>
+          <li class="todo-list-item" data-todo_id="3">
+            <div class="todo">
+              <input type="checkbox" id="3" class="checkbox" />
+              <label for="3">Lorem ipsum dolor sit amet.</label>
+            </div>
+            <button class="delete-btn">X</button>
+          </li>
+          <li class="todo-list-item" data-todo_id="4">
+            <div class="todo">
+              <input type="checkbox" id="4" class="checkbox" />
+              <label for="4">Lorem ipsum dolor sit amet.</label>
+            </div>
+            <button class="delete-btn">X</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
