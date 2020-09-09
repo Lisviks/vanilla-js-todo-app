@@ -53,6 +53,24 @@ function deleteTodo(id) {
   setTodos(allTodos);
 }
 
+// Edit todo
+function editTodo(e) {
+  // Select todo li html element
+  const todoListItem = e.target.parentElement.parentElement;
+  // Get todo id from data attribute and make it a number
+  const id = parseInt(todoListItem.dataset.todo_id);
+  // If id mathces todo id, then change todo text
+  allTodos[currentList].forEach((todo) => {
+    if (todo.id === id) {
+      todo.text = e.target.value;
+    }
+  });
+  // Disable input after edit complete
+  e.target.disabled = true;
+  // Save todos to local storage
+  setTodos(allTodos);
+}
+
 // Create new list
 function newList(listName) {
   // Create new list with an empty array
@@ -97,13 +115,14 @@ function listItem(todo) {
 
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
-  checkbox.id = todo.id;
   checkbox.classList = 'checkbox';
   checkbox.checked = todo.complete;
 
-  const todoText = document.createElement('label');
-  todoText.htmlFor = todo.id;
-  todoText.innerText = todo.text;
+  const todoText = document.createElement('input');
+  todoText.type = 'text';
+  todoText.classList = 'todo-text';
+  todoText.value = todo.text;
+  todoText.disabled = true;
 
   const deleteBtn = document.createElement('button');
   deleteBtn.classList = 'delete-btn';
@@ -205,6 +224,20 @@ todoListHtml.addEventListener('click', (e) => {
     // If there are none left show Nothing todo... message
     if (!allTodos[currentList].length)
       todoListHtml.innerHTML = '<h3 class="nothing-todo">Nothing todo...</h3>';
+  }
+});
+
+// Add double click event listener to start editing todo
+todoListHtml.addEventListener('dblclick', (e) => {
+  // After double click check if it has class todo-text
+  if (e.target.classList.contains('todo-text')) {
+    // Enable input for editing
+    e.target.disabled = false;
+    // Set focus on that input
+    e.target.focus();
+    // Add blur and enter event listener to complete editing todo
+    e.target.addEventListener('blur', editTodo);
+    e.target.addEventListener('keyup', (e) => e.key === 'Enter' && editTodo(e));
   }
 });
 

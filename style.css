@@ -34,7 +34,6 @@ h1 {
 
 h3 {
   text-align: center;
-  margin-top: 3rem;
 }
 
 /* Sidenav */
@@ -74,6 +73,12 @@ h3 {
 
 .new-list-form #list-name {
   padding: .2rem .5rem;
+  border: none;
+}
+
+.new-list-form #list-name:focus {
+  outline: #f08741 solid 2px;
+  outline-offset: -2px;
 }
 
 .new-list-form .new-list-btn {
@@ -96,15 +101,15 @@ h3 {
   justify-content: center;
   align-items: stretch;
   width: 100%;
+  margin-top: 1rem;
 }
 
 #todo-form label {
-  font-size: 1.8rem;
+  align-self: center;
 }
 
 #todo-form #todo-text {
-  padding: .4rem 1rem;
-  font-size: 1.3rem;
+  padding: .3rem 1rem;
   border: none;
   flex-grow: 1;
   outline: none;
@@ -113,7 +118,7 @@ h3 {
 
 #todo-form #todo-text:focus {
   outline: #f08741 solid 2px;
-  outline-offset: -1px;
+  outline-offset: -2px;
 }
 
 .btn {
@@ -122,30 +127,40 @@ h3 {
   background: #f08741;
   color: #fff;
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1rem;
 }
 
 .todo-list {
   list-style: none;
   width: 100%;
-  margin: 2rem auto 0;
 }
 
 .todo-list-item {
   display: flex;
   justify-content: space-between;
-  margin-top: .2rem;
+  margin-bottom: .2rem;
+}
+
+.todo-list-item .todo {
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
 .checkbox {
   margin-right: .5rem;
 }
 
-.checkbox+label {
+.todo-list-item .todo .todo-text {
+  flex-grow: 1;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #fff;
   transition: opacity .3s ease-in-out;
 }
 
-.checkbox:checked+label {
+.checkbox:checked+.todo-text {
   opacity: .5;
   text-decoration: line-through;
 }
@@ -158,30 +173,4 @@ h3 {
 
 .delete-btn:focus {
   outline: none;
-}
-
-@media(max-width: 700px) {
-  h1 {
-    font-size: 3rem;
-  }
-  #todo-form label {
-    font-size: 1.3rem;
-  }
-  #todo-form #todo-text {
-    font-size: .8rem;
-  }
-}
-
-@media(max-width: 550px) {
-  #todo-form label {
-    font-size: 1rem;
-    align-self: center;
-  }
-}
-
-@media(max-width: 450px) {
-  .btn {
-    font-size: 1rem;
-    padding: 0 .7rem;
-  }
 }
