@@ -79,6 +79,18 @@ function newList(listName) {
   // setTodos(allTodos);
 }
 
+// Delete list
+function deleteList(e) {
+  // Get list item id
+  const id = e.target.previousSibling.id;
+  // Delete list using id
+  delete allTodos[id];
+  // Remove from DOM
+  e.target.parentElement.parentElement.removeChild(e.target.parentElement);
+  // Save to local storage
+  setTodos(allTodos);
+}
+
 // Active list
 function activeList(e) {
   // Change current list to the one that was clicked
@@ -138,13 +150,28 @@ function listItem(todo) {
 function sidenavListItem(list) {
   // Capitalize first letter
   const listTitle = list.charAt(0).toUpperCase() + list.slice(1);
-  const listItem = document.createElement('li');
+  const listItem = document.createElement('div');
   listItem.id = list.toLowerCase();
   listItem.classList =
     list === 'inbox' ? 'sidenav-item active' : 'sidenav-item';
   listItem.innerText = listTitle;
 
-  return listItem;
+  const listItemDeleteBtn = document.createElement('button');
+  listItemDeleteBtn.classList = 'delete-btn';
+  listItemDeleteBtn.innerText = 'X';
+
+  const listItemWrapper = document.createElement('li');
+  listItemWrapper.classList = 'list-item-wrapper';
+
+  // Check if list is inbox or important, then don't add delete button
+  // Else add delete button
+  if (list === 'inbox' || list === 'important') {
+    listItemWrapper.append(listItem);
+  } else {
+    listItemWrapper.append(listItem, listItemDeleteBtn);
+  }
+
+  return listItemWrapper;
 }
 
 // Show all lists in a sidenav
@@ -256,6 +283,14 @@ newListForm.addEventListener('submit', (e) => {
   textInput.value = '';
   // Reload sidenav
   switchList();
+});
+
+// Add event listener for todo list
+sidenavList.addEventListener('click', (e) => {
+  // Check if delete button was clicked
+  if (e.target.classList.contains('delete-btn')) {
+    deleteList(e);
+  }
 });
 
 // Init app

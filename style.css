@@ -47,6 +47,24 @@ h3 {
   list-style: none;
 }
 
+.sidenav .list-item-wrapper {
+  position: relative;
+}
+
+.sidenav .list-item-wrapper .delete-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity .3s ease;
+}
+
+.sidenav .list-item-wrapper:hover .delete-btn {
+  opacity: 1;
+}
+
 .sidenav .sidenav-list .sidenav-item {
   padding: .3rem 1rem;
   transition: background-color .3s ease;
