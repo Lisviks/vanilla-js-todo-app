@@ -165,6 +165,9 @@ function init() {
 // Add event listener to a todo form
 todoForm.addEventListener('submit', (e) => {
   e.preventDefault();
+  // Check if there are any todos in a list
+  // If there are none, then remove Nothing todo... message
+  if (!allTodos[currentList].length) todoListHtml.innerHTML = '';
   // Select new todo text input
   const textInput = todoForm['todo-text'];
   // Check for empty input
@@ -198,6 +201,10 @@ todoListHtml.addEventListener('click', (e) => {
     deleteTodo(id);
     // Remove todo from DOM
     todoListItem.parentElement.removeChild(todoListItem);
+    // Check if there are any todos left in a list
+    // If there are none left show Nothing todo... message
+    if (!allTodos[currentList].length)
+      todoListHtml.innerHTML = '<h3 class="nothing-todo">Nothing todo...</h3>';
   }
 });
 
