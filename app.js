@@ -1,9 +1,11 @@
 const todoForm = document.getElementById('todo-form');
 const todoListHtml = document.getElementById('todo-list');
+const sidenavList = document.getElementById('sidenav-list');
 
 // Get todos from local storage, if no todos then return empty array
 function getTodos() {
-  return JSON.parse(localStorage.getItem('todos')) || [];
+  const defaultLists = { inbox: [], important: [] };
+  return JSON.parse(localStorage.getItem('todos')) || defaultLists;
 }
 
 // Save todos to local storage
@@ -11,18 +13,21 @@ function setTodos(todos) {
   localStorage.setItem('todos', JSON.stringify(todos));
 }
 
-const todos = getTodos();
+const allTodos = getTodos();
+let currentList = 'inbox';
 
 function newTodo(text) {
   // Check last todo id in the todos array and add 1 to it for the new todo
-  const id = todos.length ? todos[todos.length - 1].id + 1 : 1;
+  const id = allTodos[currentList].length
+    ? allTodos[currentList][allTodos[currentList].length - 1].id + 1
+    : 1;
   // New todo object
   const todo = { id, text, complete: false };
-  // Add new todo to the todos array
-  todos.push(todo);
+  // Add new todo to the current list todos array
+  allTodos[currentList].push(todo);
 
   // Save todos to local storage
-  setTodos(todos);
+  setTodos(allTodos);
 
   return todo;
 }
@@ -30,20 +35,40 @@ function newTodo(text) {
 // Toggle todo complete
 function toggleTodo(id) {
   // Map through todos array and toggle todo complete with matching id
-  const newTodosArr = todos.map((todo) => {
+  allTodos[currentList].forEach((todo) => {
     if (todo.id === id) todo.complete = !todo.complete;
-    return todo;
   });
   // Save to local storage
-  setTodos(newTodosArr);
+  setTodos(allTodos);
 }
 
 // Delete todo
 function deleteTodo(id) {
   // Filter out todo that matches id
-  const newTodosArr = todos.filter((todo) => todo.id !== id);
+  const newTodosArr = allTodos[currentList].filter((todo) => todo.id !== id);
+  // Replace current list todos array with a new array
+  allTodos[currentList] = newTodosArr;
   // Save to local storage
-  setTodos(newTodosArr);
+  setTodos(allTodos);
+}
+
+// Switch to a different todo list
+function switchList() {
+  // Select all sidenav items
+  const todoListItems = document.querySelectorAll('.sidenav-item');
+  // Add even listeners for each sidenav item
+  todoListItems.forEach((item) => {
+    item.addEventListener('click', (e) => {
+      // Change current list to the one that was clicked
+      currentList = String(e.target.id);
+      // Call todoList function to change visbile todos
+      todoList();
+      // Select current active list on the sidenav and remove .active class
+      document.querySelector('.sidenav-item.active').classList.remove('active');
+      // Add .active class to the current list
+      e.target.classList.add('active');
+    });
+  });
 }
 
 // Create list item for html
@@ -75,10 +100,37 @@ function listItem(todo) {
   return listItem;
 }
 
+// Show all lists in a sidenav
+function allLists() {
+  // Get all list names from an object
+  const lists = Object.keys(allTodos);
+  // Go through lists, create li for each and add them to DOM
+  lists.forEach((list) => {
+    // Capitalize first letter
+    const listTitle = list.charAt(0).toUpperCase() + list.slice(1);
+    const sidenavListItem = document.createElement('li');
+    sidenavListItem.id = list;
+    sidenavListItem.classList =
+      list === 'inbox' ? 'sidenav-item active' : 'sidenav-item';
+    sidenavListItem.innerText = listTitle;
+
+    sidenavList.appendChild(sidenavListItem);
+  });
+}
+
 // Add all todos to DOM
 function todoList() {
   todoListHtml.innerHTML = '';
-  todos.forEach((todo) => todoListHtml.appendChild(listItem(todo)));
+  allTodos[currentList].forEach((todo) =>
+    todoListHtml.appendChild(listItem(todo))
+  );
+}
+
+// Initialize app function
+function init() {
+  allLists();
+  switchList();
+  todoList();
 }
 
 // Add event listener to a todo form
@@ -121,4 +173,4 @@ todoListHtml.addEventListener('click', (e) => {
 });
 
 // Init app
-todoList();
+init();
