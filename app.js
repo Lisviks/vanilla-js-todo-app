@@ -1,6 +1,7 @@
 const todoForm = document.getElementById('todo-form');
 const todoListHtml = document.getElementById('todo-list');
 const sidenavList = document.getElementById('sidenav-list');
+const newListForm = document.getElementById('new-list-form');
 
 // Get todos from local storage, if no todos then return empty array
 function getTodos() {
@@ -52,22 +53,36 @@ function deleteTodo(id) {
   setTodos(allTodos);
 }
 
+// Create new list
+function newList(listName) {
+  // Create new list with an empty array
+  allTodos[listName.toLowerCase()] = [];
+  // Save all lists with their todos to a local storage
+  // setTodos(allTodos);
+}
+
+// Active list
+function activeList(e) {
+  // Change current list to the one that was clicked
+  currentList = String(e.target.id);
+  // Call todoList function to change visbile todos
+  todoList();
+  // Select current active list on the sidenav and remove .active class
+  document.querySelector('.sidenav-item.active').classList.remove('active');
+  // Add .active class to the current list
+  e.target.classList.add('active');
+}
+
 // Switch to a different todo list
 function switchList() {
   // Select all sidenav items
   const todoListItems = document.querySelectorAll('.sidenav-item');
   // Add even listeners for each sidenav item
   todoListItems.forEach((item) => {
-    item.addEventListener('click', (e) => {
-      // Change current list to the one that was clicked
-      currentList = String(e.target.id);
-      // Call todoList function to change visbile todos
-      todoList();
-      // Select current active list on the sidenav and remove .active class
-      document.querySelector('.sidenav-item.active').classList.remove('active');
-      // Add .active class to the current list
-      e.target.classList.add('active');
-    });
+    // First remove event listeners if there are any
+    item.removeEventListener('click', activeList);
+    // And then add new event listeners
+    item.addEventListener('click', activeList);
   });
 }
 
@@ -100,30 +115,44 @@ function listItem(todo) {
   return listItem;
 }
 
+// Sidenav list item
+function sidenavListItem(list) {
+  // Capitalize first letter
+  const listTitle = list.charAt(0).toUpperCase() + list.slice(1);
+  const listItem = document.createElement('li');
+  listItem.id = list.toLowerCase();
+  listItem.classList =
+    list === 'inbox' ? 'sidenav-item active' : 'sidenav-item';
+  listItem.innerText = listTitle;
+
+  return listItem;
+}
+
 // Show all lists in a sidenav
 function allLists() {
   // Get all list names from an object
   const lists = Object.keys(allTodos);
   // Go through lists, create li for each and add them to DOM
   lists.forEach((list) => {
-    // Capitalize first letter
-    const listTitle = list.charAt(0).toUpperCase() + list.slice(1);
-    const sidenavListItem = document.createElement('li');
-    sidenavListItem.id = list;
-    sidenavListItem.classList =
-      list === 'inbox' ? 'sidenav-item active' : 'sidenav-item';
-    sidenavListItem.innerText = listTitle;
+    const listItem = sidenavListItem(list);
 
-    sidenavList.appendChild(sidenavListItem);
+    sidenavList.appendChild(listItem);
   });
 }
 
 // Add all todos to DOM
 function todoList() {
+  // First clear todo list
   todoListHtml.innerHTML = '';
-  allTodos[currentList].forEach((todo) =>
-    todoListHtml.appendChild(listItem(todo))
-  );
+  // Check if there are any todos on the current list
+  allTodos[currentList].length
+    ? // If there, append each to the html
+      allTodos[currentList].forEach((todo) =>
+        todoListHtml.appendChild(listItem(todo))
+      )
+    : // If there are none display message Nothing todo...
+      (todoListHtml.innerHTML =
+        '<h3 class="nothing-todo">Nothing todo...</h3>');
 }
 
 // Initialize app function
@@ -136,7 +165,7 @@ function init() {
 // Add event listener to a todo form
 todoForm.addEventListener('submit', (e) => {
   e.preventDefault();
-  // Get new todo text from form
+  // Select new todo text input
   const textInput = todoForm['todo-text'];
   // Check for empty input
   if (!textInput.value) return;
@@ -170,6 +199,23 @@ todoListHtml.addEventListener('click', (e) => {
     // Remove todo from DOM
     todoListItem.parentElement.removeChild(todoListItem);
   }
+});
+
+// Add event listener to a new todo list form
+newListForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  // Select new list name input
+  const textInput = newListForm['list-name'];
+  // Check for empty input
+  if (!textInput.value) return;
+  // Add new list to allTodos object
+  newList(textInput.value);
+  // Add new list name to the sidenav
+  sidenavList.appendChild(sidenavListItem(textInput.value));
+  // Clear form
+  textInput.value = '';
+  // Reload sidenav
+  switchList();
 });
 
 // Init app
