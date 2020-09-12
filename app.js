@@ -76,7 +76,7 @@ function newList(listName) {
   // Create new list with an empty array
   allTodos[listName.toLowerCase()] = [];
   // Save all lists with their todos to a local storage
-  // setTodos(allTodos);
+  setTodos(allTodos);
 }
 
 // Delete list
@@ -87,6 +87,11 @@ function deleteList(e) {
   delete allTodos[id];
   // Remove from DOM
   e.target.parentElement.parentElement.removeChild(e.target.parentElement);
+  // Change current active list to inbox and add class active
+  currentList = 'inbox';
+  document.getElementById('inbox').classList.add('active');
+  // Load inbox todos
+  todoList();
   // Save to local storage
   setTodos(allTodos);
 }

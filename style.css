@@ -208,10 +208,6 @@ h3 {
   opacity: 1;
 }
 
-.checkbox:checked~.todo-text::before {
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-}
-
 /* Custom checkbox end */
 
 .todo-list-item .todo .todo-text {
