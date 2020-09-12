@@ -165,9 +165,52 @@ h3 {
   width: 100%;
 }
 
+/* Custom checkbox start */
+
 .checkbox {
   margin-right: .5rem;
+  position: relative;
+  width: 1.4rem;
+  height: 1.4rem;
+  color: #555;
+  border: 1px solid #555;
+  border-radius: 50%;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  transition: background .175s ease;
 }
+
+.checkbox::before {
+  position: absolute;
+  content: '';
+  display: block;
+  top: 1px;
+  left: 6px;
+  width: 6px;
+  height: 11px;
+  border-style: solid;
+  border-color: #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  opacity: 0;
+}
+
+.checkbox:checked {
+  color: #fff;
+  border-color: #f08741;
+  background: #f08741;
+}
+
+.checkbox:checked::before {
+  opacity: 1;
+}
+
+.checkbox:checked~.todo-text::before {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+/* Custom checkbox end */
 
 .todo-list-item .todo .todo-text {
   flex-grow: 1;
