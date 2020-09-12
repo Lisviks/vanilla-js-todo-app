@@ -56,10 +56,16 @@
           </li>
         </ul>
 
-        <form id="todo-form">
-          <label for="todo-text">Todo text:</label>
-          <input type="text" id="todo-text" />
-          <button type="submit" class="btn">ADD</button>
+        <form class="todo-form" id="todo-form">
+          <div class="input-field">
+            <input
+              type="text"
+              class="todo-text"
+              id="todo-text"
+              autocomplete="off"
+            />
+          </div>
+          <button type="submit" class="add-btn">Add Task</button>
         </form>
       </div>
     </div>
