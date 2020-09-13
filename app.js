@@ -44,11 +44,17 @@ function toggleTodo(id) {
 }
 
 // Delete todo
-function deleteTodo(id) {
+function deleteTodo(id, htmlElement) {
   // Filter out todo that matches id
   const newTodosArr = allTodos[currentList].filter((todo) => todo.id !== id);
   // Replace current list todos array with a new array
   allTodos[currentList] = newTodosArr;
+  // Remove todo from DOM
+  htmlElement.parentElement.removeChild(htmlElement);
+  // Check if there are any todos left in a list
+  // If there are none left show Nothing todo... message
+  if (!allTodos[currentList].length)
+    todoListHtml.innerHTML = '<h3 class="nothing-todo">Nothing todo...</h3>';
   // Save to local storage
   setTodos(allTodos);
 }
@@ -80,13 +86,11 @@ function newList(listName) {
 }
 
 // Delete list
-function deleteList(e) {
-  // Get list item id
-  const id = e.target.previousSibling.id;
+function deleteList(id, htmlElement) {
   // Delete list using id
   delete allTodos[id];
   // Remove from DOM
-  e.target.parentElement.parentElement.removeChild(e.target.parentElement);
+  htmlElement.parentElement.removeChild(htmlElement);
   // Change current active list to inbox and add class active
   currentList = 'inbox';
   document.getElementById('inbox').classList.add('active');
@@ -94,6 +98,47 @@ function deleteList(e) {
   todoList();
   // Save to local storage
   setTodos(allTodos);
+}
+
+// Confirm delete modal
+function confirmDeleteModal(itemToDelete, htmlElement, type = 'todo') {
+  const modal = document.createElement('div');
+  modal.classList = 'modal';
+  const modalContent = document.createElement('div');
+  modalContent.classList = 'modal-content';
+  const message = document.createElement('p');
+  message.innerText = `Are you sure you want to delete "${itemToDelete.text}"?`;
+  const dialogActions = document.createElement('div');
+  dialogActions.classList = 'dialog-actions';
+  const cancelBtn = document.createElement('button');
+  cancelBtn.classList = 'modal-cancel-btn btn';
+  cancelBtn.innerText = 'Cancel';
+  const deleteBtn = document.createElement('button');
+  deleteBtn.classList = 'modal-delete-btn btn';
+  deleteBtn.innerText = 'Delete';
+
+  dialogActions.append(cancelBtn, deleteBtn);
+  modalContent.append(message, dialogActions);
+  modal.appendChild(modalContent);
+
+  document.querySelector('body').appendChild(modal);
+
+  // Close modal without deleting
+  cancelBtn.addEventListener('click', () => {
+    modal.parentElement.removeChild(modal);
+  });
+  // Delete item
+  deleteBtn.addEventListener('click', () => {
+    // Check what is getting deleted
+    if (type === 'list') {
+      deleteList(itemToDelete.id, htmlElement);
+    } else {
+      // Use deleteTodo function to delete todo from array and local storage
+      deleteTodo(itemToDelete.id, htmlElement);
+    }
+    // Close modal
+    modal.parentElement.removeChild(modal);
+  });
 }
 
 // Active list
@@ -245,17 +290,13 @@ todoListHtml.addEventListener('click', (e) => {
     // Check if delete button was clicked
   } else if (e.target.classList.contains('delete-btn')) {
     // Select todo li html element
-    const todoListItem = e.target.parentElement;
+    const htmlElement = e.target.parentElement;
     // Get todo id
-    const id = parseInt(todoListItem.dataset.todo_id);
-    // Use deleteTodo function to delete todo from array and local storage
-    deleteTodo(id);
-    // Remove todo from DOM
-    todoListItem.parentElement.removeChild(todoListItem);
-    // Check if there are any todos left in a list
-    // If there are none left show Nothing todo... message
-    if (!allTodos[currentList].length)
-      todoListHtml.innerHTML = '<h3 class="nothing-todo">Nothing todo...</h3>';
+    const id = parseInt(htmlElement.dataset.todo_id);
+    // Get todo
+    const todo = allTodos[currentList].filter((todo) => todo.id === id)[0];
+    // Open modal
+    confirmDeleteModal(todo, htmlElement);
   }
 });
 
@@ -294,7 +335,13 @@ newListForm.addEventListener('submit', (e) => {
 sidenavList.addEventListener('click', (e) => {
   // Check if delete button was clicked
   if (e.target.classList.contains('delete-btn')) {
-    deleteList(e);
+    // Get list item id
+    const id = e.target.previousSibling.id;
+    // Get list title
+    const text = e.target.previousSibling.innerText;
+    // Get html element for the list
+    const htmlElement = e.target.parentElement;
+    confirmDeleteModal({ text, id }, htmlElement, 'list');
   }
 });
 
