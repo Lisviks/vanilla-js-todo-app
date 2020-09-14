@@ -166,36 +166,6 @@ function switchList() {
   });
 }
 
-// Create list item for html
-function listItem(todo) {
-  const listItem = document.createElement('li');
-  listItem.classList = 'todo-list-item';
-  listItem.dataset.todo_id = todo.id;
-
-  const todoContent = document.createElement('div');
-  todoContent.classList = 'todo';
-
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
-  checkbox.classList = 'checkbox';
-  checkbox.checked = todo.complete;
-
-  const todoText = document.createElement('input');
-  todoText.type = 'text';
-  todoText.classList = 'todo-text';
-  todoText.value = todo.text;
-  todoText.disabled = true;
-
-  const deleteBtn = document.createElement('button');
-  deleteBtn.classList = 'delete-btn';
-  deleteBtn.innerText = 'X';
-
-  todoContent.append(checkbox, todoText);
-  listItem.append(todoContent, deleteBtn);
-
-  return listItem;
-}
-
 // Sidenav list item
 function sidenavListItem(list) {
   // Capitalize first letter
@@ -236,26 +206,11 @@ function allLists() {
   });
 }
 
-// Add all todos to DOM
-function todoList() {
-  // First clear todo list
-  todoListHtml.innerHTML = '';
-  // Check if there are any todos on the current list
-  allTodos[currentList].length
-    ? // If there, append each to the html
-      allTodos[currentList].forEach((todo) =>
-        todoListHtml.appendChild(listItem(todo))
-      )
-    : // If there are none display message Nothing todo...
-      (todoListHtml.innerHTML =
-        '<h3 class="nothing-todo">Nothing todo...</h3>');
-}
-
 // Initialize app function
 function init() {
   allLists();
   switchList();
-  todoList();
+  // todoList();
 }
 
 // Add event listener to a todo form
