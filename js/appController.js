@@ -3,6 +3,8 @@ const AppCtrl = (function () {
     init: function () {
       const todos = ItemCtrl.getTodos();
       UICtrl.populateTodoList(todos);
+      const projects = ItemCtrl.getProjects();
+      UICtrl.populateProjectsList(projects);
     },
   };
 })();

@@ -2,6 +2,7 @@ const UICtrl = (function () {
   const UISelectors = {
     todoList: '#todo-list',
     todoForm: '#todo-form',
+    projectList: '#project-list',
   };
 
   // Todo html list item
@@ -34,6 +35,34 @@ const UICtrl = (function () {
     return listItem;
   };
 
+  // Project html list item
+  const projectItem = (project) => {
+    // Capitalize first letter
+    const projectTitle = project.charAt(0).toUpperCase() + project.slice(1);
+    const listItem = document.createElement('div');
+    listItem.id = project.toLowerCase();
+    listItem.classList =
+      project === 'inbox' ? 'sidenav-item active' : 'sidenav-item';
+    listItem.innerText = projectTitle;
+
+    const listItemDeleteBtn = document.createElement('button');
+    listItemDeleteBtn.classList = 'delete-btn';
+    listItemDeleteBtn.innerText = 'X';
+
+    const listItemWrapper = document.createElement('li');
+    listItemWrapper.classList = 'list-item-wrapper';
+
+    // Check if list is inbox or important, then don't add delete button
+    // Else add delete button
+    if (project === 'inbox' || project === 'important') {
+      listItemWrapper.append(listItem);
+    } else {
+      listItemWrapper.append(listItem, listItemDeleteBtn);
+    }
+
+    return listItemWrapper;
+  };
+
   return {
     populateTodoList: function (todos) {
       const todoList = document.querySelector(UISelectors.todoList);
@@ -46,6 +75,15 @@ const UICtrl = (function () {
         : // If there are none display message Nothing todo...
           (todoList.innerHTML =
             '<h3 class="nothing-todo">Nothing todo...</h3>');
+    },
+    populateProjectsList: function (projects) {
+      const projectList = document.querySelector(UISelectors.projectList);
+      // First clear project list
+      projectList.innerHTML = '';
+      // Append each project to the html
+      projects.forEach((project) =>
+        projectList.appendChild(projectItem(project))
+      );
     },
   };
 })();

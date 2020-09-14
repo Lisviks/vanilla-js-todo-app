@@ -16,5 +16,8 @@ const ItemCtrl = (function () {
     getTodos: function () {
       return data.todos[data.currentList];
     },
+    getProjects: function () {
+      return Object.keys(data.todos);
+    },
   };
 })();
