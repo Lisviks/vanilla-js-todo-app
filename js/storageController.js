@@ -1,20 +1,20 @@
 const StorageCtrl = (function () {
   const defaultList = { inbox: [], important: [] };
   return {
-    storeTodo: function (todo, currentList) {
+    storeTodo: function (todo, currentProject) {
       let todos;
       // Check if any todos in localStorage
       if (!localStorage.getItem('todos')) {
         todos = defaultList;
         // Push new todo
-        todos[currentList].push(todo);
+        todos[currentProject].push(todo);
         // Set localStorage
         localStorage.setItem('todos', JSON.stringify(todos));
       } else {
         // Get what is already in localStorage
         todos = JSON.parse(localStorage.getItem('todos'));
         // Push new todo
-        todos[currentList].push(todo);
+        todos[currentProject].push(todo);
         // Re-set localStorage
         localStorage.setItem('todos', JSON.stringify(todos));
       }
@@ -28,10 +28,10 @@ const StorageCtrl = (function () {
       }
       return todos;
     },
-    updateTodo: function (updatedTodo, currentList) {
+    updateTodo: function (updatedTodo, currentProject) {
       const todos = JSON.parse(localStorage.getItem('todos'));
 
-      todos[currentList].forEach((todo, index) => {
+      todos[currentProject].forEach((todo, index) => {
         if (updatedTodo.id === todo.id) {
           todos.splice(index, 1, updatedTodo);
         }

@@ -85,5 +85,18 @@ const UICtrl = (function () {
         projectList.appendChild(projectItem(project))
       );
     },
+    getSelectors: function () {
+      return UISelectors;
+    },
+    getTodoText: function () {
+      return document.querySelector(UISelectors.todoForm)['todo-text'].value;
+    },
+    clearTodoForm: function () {
+      document.querySelector(UISelectors.todoForm)['todo-text'].value = '';
+    },
+    addTodo: function (todo) {
+      const todoList = document.querySelector(UISelectors.todoList);
+      todoList.appendChild(todoItem(todo));
+    },
   };
 })();
