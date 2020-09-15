@@ -17,22 +17,6 @@ function setTodos(todos) {
 const allTodos = getTodos();
 let currentList = 'inbox';
 
-function newTodo(text) {
-  // Check last todo id in the todos array and add 1 to it for the new todo
-  const id = allTodos[currentList].length
-    ? allTodos[currentList][allTodos[currentList].length - 1].id + 1
-    : 1;
-  // New todo object
-  const todo = { id, text, complete: false };
-  // Add new todo to the current list todos array
-  allTodos[currentList].push(todo);
-
-  // Save todos to local storage
-  setTodos(allTodos);
-
-  return todo;
-}
-
 // Toggle todo complete
 function toggleTodo(id) {
   // Map through todos array and toggle todo complete with matching id
@@ -166,34 +150,6 @@ function switchList() {
   });
 }
 
-// Sidenav list item
-function sidenavListItem(list) {
-  // Capitalize first letter
-  const listTitle = list.charAt(0).toUpperCase() + list.slice(1);
-  const listItem = document.createElement('div');
-  listItem.id = list.toLowerCase();
-  listItem.classList =
-    list === 'inbox' ? 'sidenav-item active' : 'sidenav-item';
-  listItem.innerText = listTitle;
-
-  const listItemDeleteBtn = document.createElement('button');
-  listItemDeleteBtn.classList = 'delete-btn';
-  listItemDeleteBtn.innerText = 'X';
-
-  const listItemWrapper = document.createElement('li');
-  listItemWrapper.classList = 'list-item-wrapper';
-
-  // Check if list is inbox or important, then don't add delete button
-  // Else add delete button
-  if (list === 'inbox' || list === 'important') {
-    listItemWrapper.append(listItem);
-  } else {
-    listItemWrapper.append(listItem, listItemDeleteBtn);
-  }
-
-  return listItemWrapper;
-}
-
 // Show all lists in a sidenav
 function allLists() {
   // Get all list names from an object
@@ -212,24 +168,6 @@ function init() {
   switchList();
   // todoList();
 }
-
-// Add event listener to a todo form
-todoForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  // Check if there are any todos in a list
-  // If there are none, then remove Nothing todo... message
-  if (!allTodos[currentList].length) todoListHtml.innerHTML = '';
-  // Select new todo text input
-  const textInput = todoForm['todo-text'];
-  // Check for empty input
-  if (!textInput.value) return;
-  // Add new todo to the todos array
-  const todo = newTodo(textInput.value);
-  // Add new todo to DOM
-  todoListHtml.appendChild(listItem(todo));
-  // Clear form
-  textInput.value = '';
-});
 
 // Add event listener for toggling and deleting todos
 todoListHtml.addEventListener('click', (e) => {

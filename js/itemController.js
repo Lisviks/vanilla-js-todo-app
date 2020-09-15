@@ -36,5 +36,14 @@ const ItemCtrl = (function () {
 
       return todo;
     },
+    deleteTodo: function (id) {
+      const { todos, currentProject } = data;
+      // Get ids
+      const ids = todos[currentProject].map((todo) => todo.id);
+      // Get index
+      const index = ids.indexOf(id);
+      // Remove todo
+      todos[currentProject].splice(index, 1);
+    },
   };
 })();

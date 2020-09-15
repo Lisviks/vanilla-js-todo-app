@@ -38,12 +38,12 @@ const StorageCtrl = (function () {
       });
       localStorage.setItem('todos', JSON.stringify(todos));
     },
-    deleteTodo: function (id) {
+    deleteTodo: function (id, currentProject) {
       const todos = JSON.parse(localStorage.getItem('todos'));
 
-      todos.forEach((todo, index) => {
+      todos[currentProject].forEach((todo, index) => {
         if (id === todo.id) {
-          todos.splice(index, 1);
+          todos[currentProject].splice(index, 1);
         }
       });
       localStorage.setItem('todos', JSON.stringify(todos));

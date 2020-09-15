@@ -3,10 +3,11 @@ const UICtrl = (function () {
     todoList: '#todo-list',
     todoForm: '#todo-form',
     projectList: '#project-list',
+    deleteBtn: '.delete-btn',
   };
 
   // Todo html list item
-  const todoItem = (todo) => {
+  const todoItem = (todo, deleteTodo) => {
     const listItem = document.createElement('li');
     listItem.classList = 'todo-list-item';
     listItem.dataset.todo_id = todo.id;
@@ -31,6 +32,8 @@ const UICtrl = (function () {
 
     todoContent.append(checkbox, todoText);
     listItem.append(todoContent, deleteBtn);
+
+    deleteBtn.addEventListener('click', deleteTodo);
 
     return listItem;
   };
@@ -64,14 +67,16 @@ const UICtrl = (function () {
   };
 
   return {
-    populateTodoList: function (todos) {
+    populateTodoList: function (todos, deleteTodo) {
       const todoList = document.querySelector(UISelectors.todoList);
       // First clear todo list
       todoList.innerHTML = '';
       // Check if there are any todos on the current list
       todos.length
         ? // If there, append each to the html
-          todos.forEach((todo) => todoList.appendChild(todoItem(todo)))
+          todos.forEach((todo) =>
+            todoList.appendChild(todoItem(todo, deleteTodo))
+          )
         : // If there are none display message Nothing todo...
           (todoList.innerHTML =
             '<h3 class="nothing-todo">Nothing todo...</h3>');
@@ -94,9 +99,13 @@ const UICtrl = (function () {
     clearTodoForm: function () {
       document.querySelector(UISelectors.todoForm)['todo-text'].value = '';
     },
-    addTodo: function (todo) {
+    addTodo: function (todo, deleteTodo) {
       const todoList = document.querySelector(UISelectors.todoList);
-      todoList.appendChild(todoItem(todo));
+      todoList.appendChild(todoItem(todo, deleteTodo));
+    },
+    removeTodo: function (id) {
+      const todo = document.querySelector(`[data-todo_id='${id}']`);
+      todo.remove();
     },
   };
 })();

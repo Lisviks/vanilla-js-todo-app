@@ -18,7 +18,7 @@ const AppCtrl = (function () {
     // Add todo
     const todo = ItemCtrl.addTodo(text);
     // Add todo to UI list
-    UICtrl.addTodo(todo);
+    UICtrl.addTodo(todo, deleteTodo);
     // Get currently selected project
     const currentProject = ItemCtrl.getCurrentProject();
     // Store in localStorage
@@ -29,10 +29,22 @@ const AppCtrl = (function () {
     e.preventDefault();
   };
 
+  const deleteTodo = function (e) {
+    // Get todo id
+    const id = parseInt(e.target.parentElement.dataset.todo_id);
+    // Delete from data structure
+    ItemCtrl.deleteTodo(id);
+    // Delete from UI
+    UICtrl.removeTodo(id);
+    // Delete from localStorage
+    const currentProject = ItemCtrl.getCurrentProject();
+    StorageCtrl.deleteTodo(id, currentProject);
+  };
+
   return {
     init: function () {
       const todos = ItemCtrl.getTodos();
-      UICtrl.populateTodoList(todos);
+      UICtrl.populateTodoList(todos, deleteTodo);
       const projects = ItemCtrl.getProjects();
       UICtrl.populateProjectsList(projects);
 
