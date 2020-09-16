@@ -33,7 +33,7 @@ const StorageCtrl = (function () {
 
       todos[currentProject].forEach((todo, index) => {
         if (updatedTodo.id === todo.id) {
-          todos.splice(index, 1, updatedTodo);
+          todos[currentProject].splice(index, 1, updatedTodo);
         }
       });
       localStorage.setItem('todos', JSON.stringify(todos));

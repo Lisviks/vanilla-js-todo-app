@@ -8,10 +8,16 @@ const AppCtrl = (function () {
       .querySelector(UISelectors.todoForm)
       .addEventListener('submit', addTodo);
 
-    // Delete todo
+    // Todo list events
     document
       .querySelector(UISelectors.todoList)
-      .addEventListener('click', openDeleteConfirmModal);
+      .addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) {
+          openDeleteConfirmModal(e);
+        } else if (e.target.classList.contains('checkbox')) {
+          toggleTodo(e);
+        }
+      });
   };
 
   const addTodo = function (e) {
@@ -35,27 +41,25 @@ const AppCtrl = (function () {
   };
 
   const openDeleteConfirmModal = function (e) {
-    if (e.target.classList.contains('delete-btn')) {
-      const id = parseInt(e.target.parentElement.dataset.todo_id);
-      const todo = ItemCtrl.getTodoById(id);
+    const id = parseInt(e.target.parentElement.dataset.todo_id);
+    const todo = ItemCtrl.getTodoById(id);
 
-      ItemCtrl.setTodoToDelete(todo);
-      const modal = UICtrl.openDeleteConfirmModal(todo.text);
+    ItemCtrl.setTodoToDelete(todo);
+    const modal = UICtrl.deleteConfirmModal(todo.text);
 
-      // Close modal events
-      modal.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal')) UICtrl.closeModal();
-      });
-      modal
-        .querySelector('.modal-cancel-btn')
-        .addEventListener('click', UICtrl.closeModal());
-      // Delete todo event
-      modal.querySelector('.modal-delete-btn').addEventListener('click', () => {
-        deleteTodo();
-        // Close modal
-        UICtrl.closeModal();
-      });
-    }
+    // Close modal events
+    modal.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal')) UICtrl.closeModal();
+    });
+    modal
+      .querySelector('.modal-cancel-btn')
+      .addEventListener('click', UICtrl.closeModal());
+    // Delete todo event
+    modal.querySelector('.modal-delete-btn').addEventListener('click', () => {
+      deleteTodo();
+      // Close modal
+      UICtrl.closeModal();
+    });
   };
 
   const deleteTodo = function () {
@@ -68,6 +72,19 @@ const AppCtrl = (function () {
     // Delete from localStorage
     const currentProject = ItemCtrl.getCurrentProject();
     StorageCtrl.deleteTodo(id, currentProject);
+  };
+
+  const toggleTodo = function (e) {
+    // Get id
+    const id = parseInt(e.target.parentElement.parentElement.dataset.todo_id);
+    // Get todo
+    const todo = ItemCtrl.getTodoById(id);
+    // Toggle complete
+    todo.complete = !todo.complete;
+    // Update todo
+    ItemCtrl.updateTodo(todo);
+    const currentProject = ItemCtrl.getCurrentProject();
+    StorageCtrl.updateTodo(todo, currentProject);
   };
 
   return {

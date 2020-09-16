@@ -58,5 +58,13 @@ const ItemCtrl = (function () {
       // Remove todo
       todos[currentProject].splice(index, 1);
     },
+    updateTodo: function (updatedTodo) {
+      data.todos[data.currentProject].forEach((todo, index) => {
+        if (updatedTodo.id === todo.id) {
+          data.todos[data.currentProject].splice(index, 1, updatedTodo);
+        }
+      });
+      console.log(data);
+    },
   };
 })();
