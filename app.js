@@ -27,22 +27,6 @@ function toggleTodo(id) {
   setTodos(allTodos);
 }
 
-// Delete todo
-function deleteTodo(id, htmlElement) {
-  // Filter out todo that matches id
-  const newTodosArr = allTodos[currentList].filter((todo) => todo.id !== id);
-  // Replace current list todos array with a new array
-  allTodos[currentList] = newTodosArr;
-  // Remove todo from DOM
-  htmlElement.parentElement.removeChild(htmlElement);
-  // Check if there are any todos left in a list
-  // If there are none left show Nothing todo... message
-  if (!allTodos[currentList].length)
-    todoListHtml.innerHTML = '<h3 class="nothing-todo">Nothing todo...</h3>';
-  // Save to local storage
-  setTodos(allTodos);
-}
-
 // Edit todo
 function editTodo(e) {
   // Select todo li html element
@@ -179,17 +163,6 @@ todoListHtml.addEventListener('click', (e) => {
     const id = parseInt(todoListItem.dataset.todo_id);
     // Use toggleTodo function to toggle todo
     toggleTodo(id);
-
-    // Check if delete button was clicked
-  } else if (e.target.classList.contains('delete-btn')) {
-    // Select todo li html element
-    const htmlElement = e.target.parentElement;
-    // Get todo id
-    const id = parseInt(htmlElement.dataset.todo_id);
-    // Get todo
-    const todo = allTodos[currentList].filter((todo) => todo.id === id)[0];
-    // Open modal
-    confirmDeleteModal(todo, htmlElement);
   }
 });
 

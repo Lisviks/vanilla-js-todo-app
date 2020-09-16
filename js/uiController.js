@@ -4,6 +4,7 @@ const UICtrl = (function () {
     todoForm: '#todo-form',
     projectList: '#project-list',
     deleteBtn: '.delete-btn',
+    modal: '.modal',
   };
 
   // Todo html list item
@@ -32,8 +33,6 @@ const UICtrl = (function () {
 
     todoContent.append(checkbox, todoText);
     listItem.append(todoContent, deleteBtn);
-
-    deleteBtn.addEventListener('click', deleteTodo);
 
     return listItem;
   };
@@ -102,6 +101,33 @@ const UICtrl = (function () {
     addTodo: function (todo, deleteTodo) {
       const todoList = document.querySelector(UISelectors.todoList);
       todoList.appendChild(todoItem(todo, deleteTodo));
+    },
+    deleteConfirmModal: function (itemToDeleteText) {
+      const modal = document.createElement('div');
+      modal.classList = 'modal';
+      const modalContent = document.createElement('div');
+      modalContent.classList = 'modal-content';
+      const message = document.createElement('p');
+      message.innerText = `Are you sure you want to delete "${itemToDeleteText}"?`;
+      const dialogActions = document.createElement('div');
+      dialogActions.classList = 'dialog-actions';
+      const cancelBtn = document.createElement('button');
+      cancelBtn.classList = 'modal-cancel-btn btn';
+      cancelBtn.innerText = 'Cancel';
+      const deleteBtn = document.createElement('button');
+      deleteBtn.classList = 'modal-delete-btn btn';
+      deleteBtn.innerText = 'Delete';
+
+      dialogActions.append(cancelBtn, deleteBtn);
+      modalContent.append(message, dialogActions);
+      modal.appendChild(modalContent);
+
+      document.querySelector('body').appendChild(modal);
+
+      return modal;
+    },
+    closeModal: function () {
+      document.querySelector(UISelectors.modal).remove();
     },
     removeTodo: function (id) {
       const todo = document.querySelector(`[data-todo_id='${id}']`);

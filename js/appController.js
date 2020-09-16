@@ -7,6 +7,11 @@ const AppCtrl = (function () {
     document
       .querySelector(UISelectors.todoForm)
       .addEventListener('submit', addTodo);
+
+    // Delete todo
+    document
+      .querySelector(UISelectors.todoList)
+      .addEventListener('click', openDeleteConfirmModal);
   };
 
   const addTodo = function (e) {
@@ -29,9 +34,33 @@ const AppCtrl = (function () {
     e.preventDefault();
   };
 
-  const deleteTodo = function (e) {
+  const openDeleteConfirmModal = function (e) {
+    if (e.target.classList.contains('delete-btn')) {
+      const id = parseInt(e.target.parentElement.dataset.todo_id);
+      const todo = ItemCtrl.getTodoById(id);
+
+      ItemCtrl.setTodoToDelete(todo);
+      const modal = UICtrl.openDeleteConfirmModal(todo.text);
+
+      // Close modal events
+      modal.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal')) UICtrl.closeModal();
+      });
+      modal
+        .querySelector('.modal-cancel-btn')
+        .addEventListener('click', UICtrl.closeModal());
+      // Delete todo event
+      modal.querySelector('.modal-delete-btn').addEventListener('click', () => {
+        deleteTodo();
+        // Close modal
+        UICtrl.closeModal();
+      });
+    }
+  };
+
+  const deleteTodo = function () {
     // Get todo id
-    const id = parseInt(e.target.parentElement.dataset.todo_id);
+    const id = ItemCtrl.getTodoToDelete().id;
     // Delete from data structure
     ItemCtrl.deleteTodo(id);
     // Delete from UI
