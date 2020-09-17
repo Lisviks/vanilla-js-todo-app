@@ -5,10 +5,11 @@ const UICtrl = (function () {
     projectList: '#project-list',
     deleteBtn: '.delete-btn',
     modal: '.modal',
+    newProjectForm: '#new-project-form',
   };
 
   // Todo html list item
-  const todoItem = (todo, deleteTodo) => {
+  const todoItem = (todo) => {
     const listItem = document.createElement('li');
     listItem.classList = 'todo-list-item';
     listItem.dataset.todo_id = todo.id;
@@ -66,16 +67,14 @@ const UICtrl = (function () {
   };
 
   return {
-    populateTodoList: function (todos, deleteTodo) {
+    populateTodoList: function (todos) {
       const todoList = document.querySelector(UISelectors.todoList);
       // First clear todo list
       todoList.innerHTML = '';
       // Check if there are any todos on the current list
       todos.length
         ? // If there, append each to the html
-          todos.forEach((todo) =>
-            todoList.appendChild(todoItem(todo, deleteTodo))
-          )
+          todos.forEach((todo) => todoList.appendChild(todoItem(todo)))
         : // If there are none display message Nothing todo...
           (todoList.innerHTML =
             '<h3 class="nothing-todo">Nothing todo...</h3>');
@@ -98,9 +97,9 @@ const UICtrl = (function () {
     clearTodoForm: function () {
       document.querySelector(UISelectors.todoForm)['todo-text'].value = '';
     },
-    addTodo: function (todo, deleteTodo) {
+    addTodo: function (todo) {
       const todoList = document.querySelector(UISelectors.todoList);
-      todoList.appendChild(todoItem(todo, deleteTodo));
+      todoList.appendChild(todoItem(todo));
     },
     deleteConfirmModal: function (itemToDeleteText) {
       const modal = document.createElement('div');
@@ -132,6 +131,18 @@ const UICtrl = (function () {
     removeTodo: function (id) {
       const todo = document.querySelector(`[data-todo_id='${id}']`);
       todo.remove();
+    },
+    getNewProjectName: function () {
+      const newProjectForm = document.querySelector(UISelectors.newProjectForm);
+      return newProjectForm['project-name'].value;
+    },
+    addProject: function (projectName) {
+      const project = projectItem(projectName);
+      document.querySelector(UISelectors.projectList).appendChild(project);
+    },
+    clearNewProjectForm: function () {
+      document.querySelector(UISelectors.newProjectForm)['project-name'].value =
+        '';
     },
   };
 })();

@@ -48,5 +48,10 @@ const StorageCtrl = (function () {
       });
       localStorage.setItem('todos', JSON.stringify(todos));
     },
+    createProject: function (projectName) {
+      const todos = JSON.parse(localStorage.getItem('todos'));
+      todos[projectName] = [];
+      localStorage.setItem('todos', JSON.stringify(todos));
+    },
   };
 })();

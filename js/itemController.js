@@ -66,5 +66,8 @@ const ItemCtrl = (function () {
       });
       console.log(data);
     },
+    createProject: function (projectName) {
+      data.todos[projectName] = [];
+    },
   };
 })();

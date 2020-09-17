@@ -18,6 +18,11 @@ const AppCtrl = (function () {
           toggleTodo(e);
         }
       });
+
+    // Create new project
+    document
+      .querySelector(UISelectors.newProjectForm)
+      .addEventListener('submit', createProject);
   };
 
   const addTodo = function (e) {
@@ -85,6 +90,21 @@ const AppCtrl = (function () {
     ItemCtrl.updateTodo(todo);
     const currentProject = ItemCtrl.getCurrentProject();
     StorageCtrl.updateTodo(todo, currentProject);
+  };
+
+  const createProject = function (e) {
+    e.preventDefault();
+    // Get new project name
+    const name = UICtrl.getNewProjectName();
+    if (!name) return;
+    // Add new project to data structure
+    ItemCtrl.createProject(name);
+    // Save to localStorage
+    StorageCtrl.createProject(name);
+    // Add project to dom
+    UICtrl.addProject(name);
+    // Clear form
+    UICtrl.clearNewProjectForm();
   };
 
   return {
