@@ -6,6 +6,7 @@ const UICtrl = (function () {
     deleteBtn: '.delete-btn',
     modal: '.modal',
     newProjectForm: '#new-project-form',
+    projectItemWrapper: '.project-item-wrapper',
   };
 
   // Todo html list item
@@ -53,7 +54,7 @@ const UICtrl = (function () {
     listItemDeleteBtn.innerText = 'X';
 
     const listItemWrapper = document.createElement('li');
-    listItemWrapper.classList = 'list-item-wrapper';
+    listItemWrapper.classList = 'project-item-wrapper';
 
     // Check if list is inbox or important, then don't add delete button
     // Else add delete button
@@ -143,6 +144,19 @@ const UICtrl = (function () {
     clearNewProjectForm: function () {
       document.querySelector(UISelectors.newProjectForm)['project-name'].value =
         '';
+    },
+    changeProject: function (projectName) {
+      const projects = document.querySelectorAll(
+        UISelectors.projectItemWrapper
+      );
+      projects.forEach((project) => {
+        const div = project.querySelector('div');
+        if (div.id === projectName) {
+          div.classList.add('active');
+        } else {
+          div.classList.remove('active');
+        }
+      });
     },
   };
 })();

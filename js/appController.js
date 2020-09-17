@@ -23,6 +23,15 @@ const AppCtrl = (function () {
     document
       .querySelector(UISelectors.newProjectForm)
       .addEventListener('submit', createProject);
+
+    // Project list events
+    document
+      .querySelector(UISelectors.projectList)
+      .addEventListener('click', (e) => {
+        if (e.target.classList.contains('sidenav-item')) {
+          changeProject(e);
+        }
+      });
   };
 
   const addTodo = function (e) {
@@ -105,6 +114,18 @@ const AppCtrl = (function () {
     UICtrl.addProject(name);
     // Clear form
     UICtrl.clearNewProjectForm();
+  };
+
+  const changeProject = function (e) {
+    const id = e.target.id;
+    // Set current project
+    ItemCtrl.setCurrentProject(id);
+    // Get project todos
+    const todos = ItemCtrl.getTodos();
+    // Change active project highlight
+    UICtrl.changeProject(id);
+    // Repopulate todos
+    UICtrl.populateTodoList(todos);
   };
 
   return {

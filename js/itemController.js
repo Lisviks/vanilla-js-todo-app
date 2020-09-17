@@ -69,5 +69,8 @@ const ItemCtrl = (function () {
     createProject: function (projectName) {
       data.todos[projectName] = [];
     },
+    setCurrentProject: function (projectName) {
+      data.currentProject = projectName;
+    },
   };
 })();
