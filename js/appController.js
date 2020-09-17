@@ -88,8 +88,16 @@ const AppCtrl = (function () {
     const id = ItemCtrl.getTodoToDelete().id;
     // Delete from data structure
     ItemCtrl.deleteTodo(id);
-    // Delete from UI
-    UICtrl.removeTodo(id);
+    // Check if there are any todos left in current project
+    const todos = ItemCtrl.getTodos();
+    if (!todos.length) {
+      // Repopulate todo list with empty array to display nothing todo message
+      UICtrl.populateTodoList(todos);
+    } else {
+      // Else remove todo
+      // Delete from UI
+      UICtrl.removeTodo(id);
+    }
     // Delete from localStorage
     const currentProject = ItemCtrl.getCurrentProject();
     StorageCtrl.deleteTodo(id, currentProject);
