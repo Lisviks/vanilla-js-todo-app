@@ -35,6 +35,7 @@ const AppCtrl = (function () {
   };
 
   const addTodo = function (e) {
+    e.preventDefault();
     // Get todo text from UI Controller
     const text = UICtrl.getTodoText();
     // Check if text is empty, if empty return
@@ -42,16 +43,22 @@ const AppCtrl = (function () {
 
     // Add todo
     const todo = ItemCtrl.addTodo(text);
-    // Add todo to UI list
-    UICtrl.addTodo(todo, deleteTodo);
+    // Check if its the first todo in a project
+    const todos = ItemCtrl.getTodos();
+    if (todos.length === 1) {
+      // Remove Nothing todo... message by repopulating todo list
+      UICtrl.populateTodoList(todos);
+    } else {
+      // Else append new todo
+      // Add todo to UI list
+      UICtrl.addTodo(todo);
+    }
     // Get currently selected project
     const currentProject = ItemCtrl.getCurrentProject();
     // Store in localStorage
     StorageCtrl.storeTodo(todo, currentProject);
     // Clear todo from input
     UICtrl.clearTodoForm();
-
-    e.preventDefault();
   };
 
   const openDeleteConfirmModal = function (e) {
@@ -67,7 +74,7 @@ const AppCtrl = (function () {
     });
     modal
       .querySelector('.modal-cancel-btn')
-      .addEventListener('click', UICtrl.closeModal());
+      .addEventListener('click', UICtrl.closeModal);
     // Delete todo event
     modal.querySelector('.modal-delete-btn').addEventListener('click', () => {
       deleteTodo();
