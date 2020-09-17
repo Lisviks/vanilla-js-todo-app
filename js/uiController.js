@@ -158,5 +158,16 @@ const UICtrl = (function () {
         }
       });
     },
+    removeProject: function (projectName) {
+      const projects = document.querySelectorAll(
+        UISelectors.projectItemWrapper
+      );
+      projects.forEach((project) => {
+        const div = project.querySelector('div');
+        if (div.id === projectName) {
+          project.remove();
+        }
+      });
+    },
   };
 })();

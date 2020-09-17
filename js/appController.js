@@ -30,6 +30,8 @@ const AppCtrl = (function () {
       .addEventListener('click', (e) => {
         if (e.target.classList.contains('sidenav-item')) {
           changeProject(e);
+        } else if (e.target.classList.contains('delete-btn')) {
+          deleteProject(e);
         }
       });
   };
@@ -141,6 +143,13 @@ const AppCtrl = (function () {
     UICtrl.changeProject(id);
     // Repopulate todos
     UICtrl.populateTodoList(todos);
+  };
+
+  const deleteProject = function (e) {
+    const id = e.target.previousSibling.id;
+    ItemCtrl.deleteProject(id);
+    StorageCtrl.deleteProject(id);
+    UICtrl.removeProject(id);
   };
 
   return {

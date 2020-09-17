@@ -53,5 +53,10 @@ const StorageCtrl = (function () {
       todos[projectName] = [];
       localStorage.setItem('todos', JSON.stringify(todos));
     },
+    deleteProject: function (projectName) {
+      const todos = JSON.parse(localStorage.getItem('todos'));
+      delete todos[projectName];
+      localStorage.setItem('todos', JSON.stringify(todos));
+    },
   };
 })();

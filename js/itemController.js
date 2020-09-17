@@ -72,5 +72,8 @@ const ItemCtrl = (function () {
     setCurrentProject: function (projectName) {
       data.currentProject = projectName;
     },
+    deleteProject: function (projectName) {
+      delete data.todos[projectName];
+    },
   };
 })();
