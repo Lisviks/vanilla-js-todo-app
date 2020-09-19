@@ -102,6 +102,16 @@ const UICtrl = (function () {
       const todoList = document.querySelector(UISelectors.todoList);
       todoList.appendChild(todoItem(todo));
     },
+    enableInput: function (input) {
+      input.disabled = false;
+      input.focus();
+    },
+    disableInput: function (input) {
+      input.disabled = true;
+    },
+    getEditTodoText: function (input) {
+      return input.value;
+    },
     deleteConfirmModal: function (itemToDeleteText) {
       const modal = document.createElement('div');
       modal.classList = 'modal';

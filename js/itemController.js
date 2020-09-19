@@ -10,7 +10,7 @@ const ItemCtrl = (function () {
   const data = {
     todos: StorageCtrl.getTodos(),
     currentProject: 'inbox',
-    todoToDelete: null,
+    currentTodo: null,
   };
 
   return {
@@ -43,11 +43,11 @@ const ItemCtrl = (function () {
       )[0];
       return todo;
     },
-    setTodoToDelete: function (todo) {
-      data.todoToDelete = todo;
+    setCurrentTodo: function (todo) {
+      data.currentTodo = todo;
     },
-    getTodoToDelete: function () {
-      return data.todoToDelete;
+    getCurrentTodo: function () {
+      return data.currentTodo;
     },
     deleteTodo: function (id) {
       const { todos, currentProject } = data;
@@ -64,7 +64,6 @@ const ItemCtrl = (function () {
           data.todos[data.currentProject].splice(index, 1, updatedTodo);
         }
       });
-      console.log(data);
     },
     createProject: function (projectName) {
       data.todos[projectName] = [];

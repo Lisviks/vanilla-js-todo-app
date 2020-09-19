@@ -19,6 +19,11 @@ const AppCtrl = (function () {
         }
       });
 
+    // Edit todo
+    document
+      .querySelector(UISelectors.todoList)
+      .addEventListener('dblclick', startEdit);
+
     // Create new project
     document
       .querySelector(UISelectors.newProjectForm)
@@ -67,7 +72,7 @@ const AppCtrl = (function () {
     const id = parseInt(e.target.parentElement.dataset.todo_id);
     const todo = ItemCtrl.getTodoById(id);
 
-    ItemCtrl.setTodoToDelete(todo);
+    ItemCtrl.setCurrentTodo(todo);
     const modal = UICtrl.deleteConfirmModal(todo.text);
 
     // Close modal events
@@ -87,7 +92,7 @@ const AppCtrl = (function () {
 
   const deleteTodo = function () {
     // Get todo id
-    const id = ItemCtrl.getTodoToDelete().id;
+    const id = ItemCtrl.getCurrentTodo().id;
     // Delete from data structure
     ItemCtrl.deleteTodo(id);
     // Check if there are any todos left in current project
@@ -116,6 +121,36 @@ const AppCtrl = (function () {
     ItemCtrl.updateTodo(todo);
     const currentProject = ItemCtrl.getCurrentProject();
     StorageCtrl.updateTodo(todo, currentProject);
+  };
+
+  const startEdit = function (e) {
+    if (e.target.classList.contains('todo-text')) {
+      const id = parseInt(e.target.parentElement.parentElement.dataset.todo_id);
+      const todo = ItemCtrl.getTodoById(id);
+      ItemCtrl.setCurrentTodo(todo);
+
+      const input = e.target;
+      UICtrl.enableInput(input);
+      // First remove event listeners from input if there are any
+      input.removeEventListener('blur', completeEdit);
+      input.removeEventListener('keyup', completeEdit);
+      // Add event listeners for saving edit
+      input.addEventListener('blur', completeEdit);
+      input.addEventListener('keyup', completeEdit);
+    }
+  };
+
+  const completeEdit = function (e) {
+    if (e.type === 'blur' || (e.type === 'keyup' && e.keyCode === 13)) {
+      const todo = ItemCtrl.getCurrentTodo();
+      const input = e.target;
+      const editText = UICtrl.getEditTodoText(input);
+      todo.text = editText;
+      ItemCtrl.updateTodo(todo);
+      const currentProject = ItemCtrl.getCurrentProject();
+      StorageCtrl.updateTodo(todo, currentProject);
+      UICtrl.disableInput(input);
+    }
   };
 
   const createProject = function (e) {
