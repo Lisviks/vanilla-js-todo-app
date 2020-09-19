@@ -16,6 +16,8 @@ const AppCtrl = (function () {
           openDeleteConfirmModal(e);
         } else if (e.target.classList.contains('checkbox')) {
           toggleTodo(e);
+        } else if (e.target.classList.contains('todo-text')) {
+          openTodoModal(e);
         }
       });
 
@@ -108,6 +110,13 @@ const AppCtrl = (function () {
     // Delete from localStorage
     const currentProject = ItemCtrl.getCurrentProject();
     StorageCtrl.deleteTodo(id, currentProject);
+  };
+
+  const openTodoModal = function (e) {
+    const id = parseInt(e.target.parentElement.parentElement.dataset.todo_id);
+    const todo = ItemCtrl.getTodoById(id);
+    const currentProject = ItemCtrl.getCurrentProject();
+    UICtrl.todoModal(todo, currentProject);
   };
 
   const toggleTodo = function (e) {

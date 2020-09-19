@@ -136,6 +136,52 @@ const UICtrl = (function () {
 
       return modal;
     },
+    todoModal: function (todo, currentProject) {
+      const modal = document.createElement('div');
+      modal.classList = 'modal todo-modal';
+      const modalContent = document.createElement('div');
+      modalContent.classList = 'modal-content';
+
+      const header = document.createElement('div');
+      header.classList = 'todo-modal-header';
+      const todoProject = document.createElement('span');
+      todoProject.innerText =
+        currentProject.charAt(0).toUpperCase() + currentProject.slice(1);
+      const closeBtn = document.createElement('button');
+      closeBtn.innerText = 'X';
+
+      const todoContent = document.createElement('div');
+      todoContent.classList = 'todo';
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.classList = 'checkbox';
+      checkbox.checked = todo.complete;
+      const todoText = document.createElement('input');
+      todoText.type = 'text';
+      todoText.classList = 'todo-text';
+      todoText.value = todo.text;
+      todoText.disabled = true;
+
+      const tabList = document.createElement('div');
+      tabList.classList = 'todo-modal-tab-list';
+      const subTasks = document.createElement('button');
+      subTasks.classList = 'todo-modal-sub-tasks-tab active';
+      subTasks.innerText = 'Sub-tasks';
+      const comments = document.createElement('button');
+      comments.classList = 'todo-modal-comments-tab';
+      comments.innerText = 'Comments';
+      const tabContent = document.createElement('div');
+
+      header.append(todoProject, closeBtn);
+      todoContent.append(checkbox, todoText);
+      tabList.append(subTasks, comments);
+      modalContent.append(header, todoContent, tabList);
+      modal.appendChild(modalContent);
+
+      document.querySelector('body').appendChild(modal);
+
+      return modal;
+    },
     closeModal: function () {
       document.querySelector(UISelectors.modal).remove();
     },
