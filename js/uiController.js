@@ -152,6 +152,7 @@ const UICtrl = (function () {
 
       const todoContent = document.createElement('div');
       todoContent.classList = 'todo';
+      todoContent.dataset.todo_id = todo.id;
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.classList = 'checkbox';

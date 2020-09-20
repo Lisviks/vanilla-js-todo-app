@@ -21,11 +21,6 @@ const AppCtrl = (function () {
         }
       });
 
-    // Edit todo
-    document
-      .querySelector(UISelectors.todoList)
-      .addEventListener('dblclick', startEdit);
-
     // Create new project
     document
       .querySelector(UISelectors.newProjectForm)
@@ -116,7 +111,10 @@ const AppCtrl = (function () {
     const id = parseInt(e.target.parentElement.parentElement.dataset.todo_id);
     const todo = ItemCtrl.getTodoById(id);
     const currentProject = ItemCtrl.getCurrentProject();
-    UICtrl.todoModal(todo, currentProject);
+    const todoModal = UICtrl.todoModal(todo, currentProject);
+
+    // Edit todo event
+    todoModal.querySelector('.todo').addEventListener('click', startEdit);
   };
 
   const toggleTodo = function (e) {
@@ -134,7 +132,7 @@ const AppCtrl = (function () {
 
   const startEdit = function (e) {
     if (e.target.classList.contains('todo-text')) {
-      const id = parseInt(e.target.parentElement.parentElement.dataset.todo_id);
+      const id = parseInt(e.target.parentElement.dataset.todo_id);
       const todo = ItemCtrl.getTodoById(id);
       ItemCtrl.setCurrentTodo(todo);
 
