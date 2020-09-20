@@ -225,6 +225,7 @@ h3 {
   font-size: 1rem;
   color: #fff;
   transition: opacity .3s ease-in-out;
+  letter-spacing: 1px;
 }
 
 .checkbox:checked+.todo-text {

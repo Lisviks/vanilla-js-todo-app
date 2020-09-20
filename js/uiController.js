@@ -1,6 +1,7 @@
 const UICtrl = (function () {
   const UISelectors = {
     todoList: '#todo-list',
+    todoListItem: '.todo-list-item',
     todoForm: '#todo-form',
     projectList: '#project-list',
     deleteBtn: '.delete-btn',
@@ -23,10 +24,10 @@ const UICtrl = (function () {
     checkbox.classList = 'checkbox';
     checkbox.checked = todo.complete;
 
-    const todoText = document.createElement('input');
+    const todoText = document.createElement('span');
     todoText.type = 'text';
     todoText.classList = 'todo-text';
-    todoText.value = todo.text;
+    todoText.innerText = todo.text;
     todoText.disabled = true;
 
     const deleteBtn = document.createElement('button');
@@ -102,6 +103,14 @@ const UICtrl = (function () {
       const todoList = document.querySelector(UISelectors.todoList);
       todoList.appendChild(todoItem(todo));
     },
+    updateTodo: function (todo) {
+      const allTodos = document.querySelectorAll(UISelectors.todoListItem);
+      allTodos.forEach((todoEl) => {
+        if (parseInt(todoEl.dataset.todo_id) === todo.id) {
+          todoEl.querySelector('.todo-text').innerText = todo.text;
+        }
+      });
+    },
     enableInput: function (input) {
       input.disabled = false;
       input.focus();
@@ -148,6 +157,7 @@ const UICtrl = (function () {
       todoProject.innerText =
         currentProject.charAt(0).toUpperCase() + currentProject.slice(1);
       const closeBtn = document.createElement('button');
+      closeBtn.classList = 'close-modal-btn';
       closeBtn.innerText = 'X';
 
       const todoContent = document.createElement('div');

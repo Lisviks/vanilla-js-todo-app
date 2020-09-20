@@ -115,6 +115,14 @@ const AppCtrl = (function () {
 
     // Edit todo event
     todoModal.querySelector('.todo').addEventListener('click', startEdit);
+
+    // Close modal events
+    todoModal.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal')) UICtrl.closeModal();
+    });
+    todoModal
+      .querySelector('.close-modal-btn')
+      .addEventListener('click', UICtrl.closeModal);
   };
 
   const toggleTodo = function (e) {
@@ -157,6 +165,7 @@ const AppCtrl = (function () {
       const currentProject = ItemCtrl.getCurrentProject();
       StorageCtrl.updateTodo(todo, currentProject);
       UICtrl.disableInput(input);
+      UICtrl.updateTodo(todo);
     }
   };
 
