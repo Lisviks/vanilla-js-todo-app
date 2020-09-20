@@ -114,7 +114,13 @@ const AppCtrl = (function () {
     const todoModal = UICtrl.todoModal(todo, currentProject);
 
     // Edit todo event
-    todoModal.querySelector('.todo').addEventListener('click', startEdit);
+    todoModal.querySelector('.todo').addEventListener('click', (e) => {
+      if (e.target.classList.contains('checkbox')) {
+        toggleTodo(e);
+      } else if (e.target.classList.contains('todo-text')) {
+        startEdit(e);
+      }
+    });
 
     // Close modal events
     todoModal.addEventListener('click', (e) => {
@@ -127,7 +133,9 @@ const AppCtrl = (function () {
 
   const toggleTodo = function (e) {
     // Get id
-    const id = parseInt(e.target.parentElement.parentElement.dataset.todo_id);
+    const id =
+      parseInt(e.target.parentElement.parentElement.dataset.todo_id) ||
+      parseInt(e.target.parentElement.dataset.todo_id);
     // Get todo
     const todo = ItemCtrl.getTodoById(id);
     // Toggle complete
@@ -139,20 +147,18 @@ const AppCtrl = (function () {
   };
 
   const startEdit = function (e) {
-    if (e.target.classList.contains('todo-text')) {
-      const id = parseInt(e.target.parentElement.dataset.todo_id);
-      const todo = ItemCtrl.getTodoById(id);
-      ItemCtrl.setCurrentTodo(todo);
+    const id = parseInt(e.target.parentElement.dataset.todo_id);
+    const todo = ItemCtrl.getTodoById(id);
+    ItemCtrl.setCurrentTodo(todo);
 
-      const input = e.target;
-      UICtrl.enableInput(input);
-      // First remove event listeners from input if there are any
-      input.removeEventListener('blur', completeEdit);
-      input.removeEventListener('keyup', completeEdit);
-      // Add event listeners for saving edit
-      input.addEventListener('blur', completeEdit);
-      input.addEventListener('keyup', completeEdit);
-    }
+    const input = e.target;
+    UICtrl.enableInput(input);
+    // First remove event listeners from input if there are any
+    input.removeEventListener('blur', completeEdit);
+    input.removeEventListener('keyup', completeEdit);
+    // Add event listeners for saving edit
+    input.addEventListener('blur', completeEdit);
+    input.addEventListener('keyup', completeEdit);
   };
 
   const completeEdit = function (e) {
