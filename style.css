@@ -325,6 +325,7 @@ h3 {
   border-bottom: 1px solid #555;
   padding: .3rem;
   cursor: pointer;
+  outline: none;
 }
 
 .todo-modal-tab-list button.active {

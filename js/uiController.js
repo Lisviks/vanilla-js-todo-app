@@ -3,6 +3,8 @@ const UICtrl = (function () {
     todoList: '#todo-list',
     todoListItem: '.todo-list-item',
     todoForm: '#todo-form',
+    subTodoForm: '#sub-todo-form',
+    subTodoList: '#sub-todo-list',
     projectList: '#project-list',
     deleteBtn: '.delete-btn',
     modal: '.modal',
@@ -68,9 +70,41 @@ const UICtrl = (function () {
     return listItemWrapper;
   };
 
+  const subTasksTab = function () {
+    const subTodoTabContent = document.createElement('div');
+    subTodoTabContent.classList = 'sub-todo-tab-content';
+
+    const todoList = document.createElement('ul');
+    todoList.classList = 'todo-list';
+    todoList.id = 'sub-todo-list';
+
+    const todoForm = document.createElement('form');
+    todoForm.classList = 'todo-form';
+    todoForm.id = 'sub-todo-form';
+    const inputField = document.createElement('div');
+    inputField.classList = 'input-field';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.classList = 'todo-text';
+    input.id = 'todo-text';
+    input.autocomplete = false;
+    const submitBtn = document.createElement('button');
+    submitBtn.type = 'submit';
+    submitBtn.classList = 'add-btn btn';
+    submitBtn.innerText = 'Add Task';
+
+    inputField.appendChild(input);
+    todoForm.append(inputField, submitBtn);
+    subTodoTabContent.append(todoList, todoForm);
+
+    return subTodoTabContent;
+  };
+
+  const commentsTab = function () {};
+
   return {
-    populateTodoList: function (todos) {
-      const todoList = document.querySelector(UISelectors.todoList);
+    populateTodoList: function (todos, listToPopulate = 'todoList') {
+      const todoList = document.querySelector(UISelectors[listToPopulate]);
       // First clear todo list
       todoList.innerHTML = '';
       // Check if there are any todos on the current list
@@ -93,15 +127,15 @@ const UICtrl = (function () {
     getSelectors: function () {
       return UISelectors;
     },
-    getTodoText: function () {
-      return document.querySelector(UISelectors.todoForm)['todo-text'].value;
+    getTodoText: function (form = 'todoForm') {
+      return document.querySelector(UISelectors[form])['todo-text'].value;
     },
     clearTodoForm: function () {
       document.querySelector(UISelectors.todoForm)['todo-text'].value = '';
     },
-    addTodo: function (todo) {
-      const todoList = document.querySelector(UISelectors.todoList);
-      todoList.appendChild(todoItem(todo));
+    addTodo: function (todo, todoList = 'todoList') {
+      const list = document.querySelector(UISelectors[todoList]);
+      list.appendChild(todoItem(todo));
     },
     updateTodo: function (todo) {
       const allTodos = document.querySelectorAll(UISelectors.todoListItem);
@@ -145,7 +179,7 @@ const UICtrl = (function () {
 
       return modal;
     },
-    todoModal: function (todo, currentProject) {
+    todoModal: function (todo, currentProject, tab = subTasksTab) {
       const modal = document.createElement('div');
       modal.classList = 'modal todo-modal';
       const modalContent = document.createElement('div');
@@ -182,11 +216,13 @@ const UICtrl = (function () {
       comments.classList = 'todo-modal-comments-tab';
       comments.innerText = 'Comments';
       const tabContent = document.createElement('div');
+      tabContent.classList = 'tab-content';
 
       header.append(todoProject, closeBtn);
       todoContent.append(checkbox, todoText);
       tabList.append(subTasks, comments);
-      modalContent.append(header, todoContent, tabList);
+      tabContent.appendChild(tab());
+      modalContent.append(header, todoContent, tabList, tabContent);
       modal.appendChild(modalContent);
 
       document.querySelector('body').appendChild(modal);

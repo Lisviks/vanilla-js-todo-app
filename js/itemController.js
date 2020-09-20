@@ -4,6 +4,7 @@ const ItemCtrl = (function () {
     this.id = id;
     this.text = text;
     this.complete = false;
+    this.subTodos = [];
   };
 
   // Data Structure / State
@@ -16,6 +17,9 @@ const ItemCtrl = (function () {
   return {
     getTodos: function () {
       return data.todos[data.currentProject];
+    },
+    getSubTodos: function () {
+      return data.currentTodo.subTodos;
     },
     getProjects: function () {
       return Object.keys(data.todos);
@@ -34,6 +38,16 @@ const ItemCtrl = (function () {
       const todo = new Todo(id, text);
       // Push new todo to current project array
       todos[currentProject].push(todo);
+
+      return todo;
+    },
+    addSubTodo: function (text) {
+      const { currentTodo } = data;
+      const id = currentTodo.subTodos.length
+        ? currentTodo.subTodos[currentTodo.subTodos.length - 1].id + 1
+        : 1;
+      const todo = new Todo(id, text);
+      currentTodo.subTodos.push(todo);
 
       return todo;
     },

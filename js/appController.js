@@ -65,6 +65,17 @@ const AppCtrl = (function () {
     UICtrl.clearTodoForm();
   };
 
+  const addSubTodo = function (e) {
+    e.preventDefault();
+
+    const text = UICtrl.getTodoText('subTodoForm');
+    const todo = ItemCtrl.addSubTodo(text);
+    UICtrl.addTodo(todo, 'subTodoList');
+    const currentTodo = ItemCtrl.getCurrentTodo();
+    const currentProject = ItemCtrl.getCurrentProject();
+    StorageCtrl.storeSubTodo(todo, currentProject, currentTodo);
+  };
+
   const openDeleteConfirmModal = function (e) {
     const id = parseInt(e.target.parentElement.dataset.todo_id);
     const todo = ItemCtrl.getTodoById(id);
@@ -110,8 +121,17 @@ const AppCtrl = (function () {
   const openTodoModal = function (e) {
     const id = parseInt(e.target.parentElement.parentElement.dataset.todo_id);
     const todo = ItemCtrl.getTodoById(id);
+    ItemCtrl.setCurrentTodo(todo);
     const currentProject = ItemCtrl.getCurrentProject();
     const todoModal = UICtrl.todoModal(todo, currentProject);
+
+    const subTodos = ItemCtrl.getSubTodos();
+    UICtrl.populateTodoList(subTodos, 'subTodoList');
+
+    // Add sub todo event
+    todoModal
+      .querySelector('#sub-todo-form')
+      .addEventListener('submit', addSubTodo);
 
     // Edit todo event
     todoModal.querySelector('.todo').addEventListener('click', (e) => {
@@ -149,7 +169,6 @@ const AppCtrl = (function () {
   const startEdit = function (e) {
     const id = parseInt(e.target.parentElement.dataset.todo_id);
     const todo = ItemCtrl.getTodoById(id);
-    ItemCtrl.setCurrentTodo(todo);
 
     const input = e.target;
     UICtrl.enableInput(input);
@@ -212,7 +231,7 @@ const AppCtrl = (function () {
   return {
     init: function () {
       const todos = ItemCtrl.getTodos();
-      UICtrl.populateTodoList(todos, deleteTodo);
+      UICtrl.populateTodoList(todos);
       const projects = ItemCtrl.getProjects();
       UICtrl.populateProjectsList(projects);
 
