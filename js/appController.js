@@ -73,7 +73,7 @@ const AppCtrl = (function () {
     UICtrl.addTodo(todo, 'subTodoList');
     const currentTodo = ItemCtrl.getCurrentTodo();
     const currentProject = ItemCtrl.getCurrentProject();
-    StorageCtrl.storeSubTodo(todo, currentProject, currentTodo);
+    StorageCtrl.storeTodo(todo, currentProject);
   };
 
   const openDeleteConfirmModal = function (e) {
@@ -230,7 +230,7 @@ const AppCtrl = (function () {
 
   return {
     init: function () {
-      const todos = ItemCtrl.getTodos();
+      const todos = ItemCtrl.getTodos().filter((todo) => todo.todoRef === null);
       UICtrl.populateTodoList(todos);
       const projects = ItemCtrl.getProjects();
       UICtrl.populateProjectsList(projects);

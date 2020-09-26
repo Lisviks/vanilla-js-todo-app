@@ -1,10 +1,10 @@
 const ItemCtrl = (function () {
   // Todo constructor
-  const Todo = function (id, text) {
+  const Todo = function (id, text, todoRef = null) {
     this.id = id;
     this.text = text;
+    this.todoRef = todoRef;
     this.complete = false;
-    this.subTodos = [];
   };
 
   // Data Structure / State
@@ -19,7 +19,9 @@ const ItemCtrl = (function () {
       return data.todos[data.currentProject];
     },
     getSubTodos: function () {
-      return data.currentTodo.subTodos;
+      return data.todos[data.currentProject].filter(
+        (todo) => todo.todoRef === data.currentTodo.id
+      );
     },
     getProjects: function () {
       return Object.keys(data.todos);
@@ -42,12 +44,12 @@ const ItemCtrl = (function () {
       return todo;
     },
     addSubTodo: function (text) {
-      const { currentTodo } = data;
-      const id = currentTodo.subTodos.length
-        ? currentTodo.subTodos[currentTodo.subTodos.length - 1].id + 1
+      const { todos, currentTodo, currentProject } = data;
+      const id = todos[currentProject].length
+        ? todos[currentProject][todos[currentProject].length - 1].id + 1
         : 1;
-      const todo = new Todo(id, text);
-      currentTodo.subTodos.push(todo);
+      const todo = new Todo(id, text, currentTodo.id);
+      todos[currentProject].push(todo);
 
       return todo;
     },
