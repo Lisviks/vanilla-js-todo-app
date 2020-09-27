@@ -1,6 +1,11 @@
 const StorageCtrl = (function () {
   const defaultList = { inbox: [], important: [] };
   return {
+    init: function () {
+      if (!localStorage.getItem('todos')) {
+        localStorage.setItem('todos', JSON.stringify(defaultList));
+      }
+    },
     storeTodo: function (todo, currentProject) {
       let todos;
       // Check if any todos in localStorage
