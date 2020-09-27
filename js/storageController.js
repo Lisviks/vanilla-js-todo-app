@@ -19,6 +19,16 @@ const StorageCtrl = (function () {
         localStorage.setItem('todos', JSON.stringify(todos));
       }
     },
+    storeSubTodo: function (subTodo, currentProject, currentTodo) {
+      const todos = JSON.parse(localStorage.getItem('todos'));
+      todos[currentProject].forEach((todo) => {
+        if (todo.id === currentTodo.id) {
+          todo.subTodos.push(subTodo);
+        }
+      });
+
+      localStorage.setItem('todos', JSON.stringify(todos));
+    },
     getTodos: function () {
       let todos;
       if (!localStorage.getItem('todos')) {

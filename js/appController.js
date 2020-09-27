@@ -16,13 +16,10 @@ const AppCtrl = (function () {
           openDeleteConfirmModal(e);
         } else if (e.target.classList.contains('checkbox')) {
           toggleTodo(e);
+        } else if (e.target.classList.contains('todo-text')) {
+          openTodoModal(e);
         }
       });
-
-    // Edit todo
-    document
-      .querySelector(UISelectors.todoList)
-      .addEventListener('dblclick', startEdit);
 
     // Create new project
     document
@@ -65,41 +62,70 @@ const AppCtrl = (function () {
     // Store in localStorage
     StorageCtrl.storeTodo(todo, currentProject);
     // Clear todo from input
-    UICtrl.clearTodoForm();
+    UICtrl.clearForm('todoForm');
+  };
+
+  const addSubTodo = function (e) {
+    e.preventDefault();
+
+    const text = UICtrl.getTodoText('subTodoForm');
+    const todo = ItemCtrl.addSubTodo(text);
+    // Check if its the first sub-todo
+    const currentTodo = ItemCtrl.getCurrentTodo();
+    const todos = ItemCtrl.getTodos().filter(
+      (todo) => todo.todoRef === currentTodo.id
+    );
+    if (todos.length === 1) {
+      // Remove Nothing todo... message by repopulating todo list
+      UICtrl.populateTodoList(todos, 'subTodoList');
+    } else {
+      // Else append new todo
+      // Add todo to UI list
+      UICtrl.addTodo(todo, 'subTodoList');
+    }
+    const currentProject = ItemCtrl.getCurrentProject();
+    StorageCtrl.storeTodo(todo, currentProject);
+    UICtrl.clearForm('subTodoForm');
   };
 
   const openDeleteConfirmModal = function (e) {
     const id = parseInt(e.target.parentElement.dataset.todo_id);
     const todo = ItemCtrl.getTodoById(id);
 
-    ItemCtrl.setCurrentTodo(todo);
+    ItemCtrl.setDeleteTodo(todo);
     const modal = UICtrl.deleteConfirmModal(todo.text);
 
     // Close modal events
     modal.addEventListener('click', (e) => {
-      if (e.target.classList.contains('modal')) UICtrl.closeModal();
+      if (e.target.classList.contains('delete-modal'))
+        UICtrl.closeModal('deleteModal');
     });
     modal
       .querySelector('.modal-cancel-btn')
-      .addEventListener('click', UICtrl.closeModal);
+      .addEventListener('click', () => UICtrl.closeModal('deleteModal'));
     // Delete todo event
     modal.querySelector('.modal-delete-btn').addEventListener('click', () => {
       deleteTodo();
       // Close modal
-      UICtrl.closeModal();
+      UICtrl.closeModal('deleteModal');
     });
   };
 
   const deleteTodo = function () {
     // Get todo id
-    const id = ItemCtrl.getCurrentTodo().id;
+    const id = ItemCtrl.getDeleteTodo().id;
     // Delete from data structure
     ItemCtrl.deleteTodo(id);
     // Check if there are any todos left in current project
-    const todos = ItemCtrl.getTodos();
-    if (!todos.length) {
+    const todos = ItemCtrl.getTodos().filter((todo) => todo.todoRef === null);
+    const currentTodo = ItemCtrl.getCurrentTodo();
+    const subTodos = ItemCtrl.getTodos().filter(
+      (todo) => todo.todoRef === currentTodo.id
+    );
+    if (!todos.length || !subTodos.length) {
       // Repopulate todo list with empty array to display nothing todo message
       UICtrl.populateTodoList(todos);
+      UICtrl.populateTodoList(subTodos, 'subTodoList');
     } else {
       // Else remove todo
       // Delete from UI
@@ -110,9 +136,57 @@ const AppCtrl = (function () {
     StorageCtrl.deleteTodo(id, currentProject);
   };
 
+  const openTodoModal = function (e) {
+    const id = parseInt(e.target.parentElement.parentElement.dataset.todo_id);
+    const todo = ItemCtrl.getTodoById(id);
+    ItemCtrl.setCurrentTodo(todo);
+    const currentProject = ItemCtrl.getCurrentProject();
+    const todoModal = UICtrl.todoModal(todo, currentProject);
+
+    const subTodos = ItemCtrl.getSubTodos();
+    UICtrl.populateTodoList(subTodos, 'subTodoList');
+
+    // Add sub todo event
+    todoModal
+      .querySelector('#sub-todo-form')
+      .addEventListener('submit', addSubTodo);
+
+    // Edit todo event
+    todoModal.querySelector('.todo').addEventListener('click', (e) => {
+      if (e.target.classList.contains('checkbox')) {
+        toggleTodo(e);
+      } else if (e.target.classList.contains('todo-text')) {
+        startEdit(e);
+      }
+    });
+
+    const UISelectors = UICtrl.getSelectors();
+    document
+      .querySelector(UISelectors.subTodoList)
+      .addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) {
+          openDeleteConfirmModal(e);
+        } else if (e.target.classList.contains('checkbox')) {
+          toggleTodo(e);
+        } else if (e.target.classList.contains('todo-text')) {
+          // openTodoModal(e);
+        }
+      });
+
+    // Close modal events
+    todoModal.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal')) UICtrl.closeModal('todoModal');
+    });
+    todoModal
+      .querySelector('.close-modal-btn')
+      .addEventListener('click', () => UICtrl.closeModal('todoModal'));
+  };
+
   const toggleTodo = function (e) {
     // Get id
-    const id = parseInt(e.target.parentElement.parentElement.dataset.todo_id);
+    const id =
+      parseInt(e.target.parentElement.parentElement.dataset.todo_id) ||
+      parseInt(e.target.parentElement.dataset.todo_id);
     // Get todo
     const todo = ItemCtrl.getTodoById(id);
     // Toggle complete
@@ -124,20 +198,16 @@ const AppCtrl = (function () {
   };
 
   const startEdit = function (e) {
-    if (e.target.classList.contains('todo-text')) {
-      const id = parseInt(e.target.parentElement.parentElement.dataset.todo_id);
-      const todo = ItemCtrl.getTodoById(id);
-      ItemCtrl.setCurrentTodo(todo);
+    const id = parseInt(e.target.parentElement.dataset.todo_id);
 
-      const input = e.target;
-      UICtrl.enableInput(input);
-      // First remove event listeners from input if there are any
-      input.removeEventListener('blur', completeEdit);
-      input.removeEventListener('keyup', completeEdit);
-      // Add event listeners for saving edit
-      input.addEventListener('blur', completeEdit);
-      input.addEventListener('keyup', completeEdit);
-    }
+    const input = e.target;
+    UICtrl.enableInput(input);
+    // First remove event listeners from input if there are any
+    input.removeEventListener('blur', completeEdit);
+    input.removeEventListener('keyup', completeEdit);
+    // Add event listeners for saving edit
+    input.addEventListener('blur', completeEdit);
+    input.addEventListener('keyup', completeEdit);
   };
 
   const completeEdit = function (e) {
@@ -150,6 +220,7 @@ const AppCtrl = (function () {
       const currentProject = ItemCtrl.getCurrentProject();
       StorageCtrl.updateTodo(todo, currentProject);
       UICtrl.disableInput(input);
+      UICtrl.updateTodo(todo);
     }
   };
 
@@ -172,8 +243,8 @@ const AppCtrl = (function () {
     const id = e.target.id;
     // Set current project
     ItemCtrl.setCurrentProject(id);
-    // Get project todos
-    const todos = ItemCtrl.getTodos();
+    // Get project todos, while filtering out sub todos
+    const todos = ItemCtrl.getTodos().filter((todo) => todo.todoRef === null);
     // Change active project highlight
     UICtrl.changeProject(id);
     // Repopulate todos
@@ -189,8 +260,9 @@ const AppCtrl = (function () {
 
   return {
     init: function () {
-      const todos = ItemCtrl.getTodos();
-      UICtrl.populateTodoList(todos, deleteTodo);
+      // Get project todos, while filtering out sub todos
+      const todos = ItemCtrl.getTodos().filter((todo) => todo.todoRef === null);
+      UICtrl.populateTodoList(todos);
       const projects = ItemCtrl.getProjects();
       UICtrl.populateProjectsList(projects);
 

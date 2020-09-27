@@ -1,10 +1,14 @@
 const UICtrl = (function () {
   const UISelectors = {
     todoList: '#todo-list',
+    todoListItem: '.todo-list-item',
     todoForm: '#todo-form',
+    subTodoForm: '#sub-todo-form',
+    subTodoList: '#sub-todo-list',
     projectList: '#project-list',
     deleteBtn: '.delete-btn',
-    modal: '.modal',
+    todoModal: '.todo-modal',
+    deleteModal: '.delete-modal',
     newProjectForm: '#new-project-form',
     projectItemWrapper: '.project-item-wrapper',
   };
@@ -23,10 +27,10 @@ const UICtrl = (function () {
     checkbox.classList = 'checkbox';
     checkbox.checked = todo.complete;
 
-    const todoText = document.createElement('input');
+    const todoText = document.createElement('span');
     todoText.type = 'text';
     todoText.classList = 'todo-text';
-    todoText.value = todo.text;
+    todoText.innerText = todo.text;
     todoText.disabled = true;
 
     const deleteBtn = document.createElement('button');
@@ -67,9 +71,41 @@ const UICtrl = (function () {
     return listItemWrapper;
   };
 
+  const subTasksTab = function () {
+    const subTodoTabContent = document.createElement('div');
+    subTodoTabContent.classList = 'sub-todo-tab-content';
+
+    const todoList = document.createElement('ul');
+    todoList.classList = 'todo-list';
+    todoList.id = 'sub-todo-list';
+
+    const todoForm = document.createElement('form');
+    todoForm.classList = 'todo-form';
+    todoForm.id = 'sub-todo-form';
+    const inputField = document.createElement('div');
+    inputField.classList = 'input-field';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.classList = 'todo-text';
+    input.id = 'form-text';
+    input.autocomplete = false;
+    const submitBtn = document.createElement('button');
+    submitBtn.type = 'submit';
+    submitBtn.classList = 'add-btn btn';
+    submitBtn.innerText = 'Add Task';
+
+    inputField.appendChild(input);
+    todoForm.append(inputField, submitBtn);
+    subTodoTabContent.append(todoList, todoForm);
+
+    return subTodoTabContent;
+  };
+
+  const commentsTab = function () {};
+
   return {
-    populateTodoList: function (todos) {
-      const todoList = document.querySelector(UISelectors.todoList);
+    populateTodoList: function (todos, listToPopulate = 'todoList') {
+      const todoList = document.querySelector(UISelectors[listToPopulate]);
       // First clear todo list
       todoList.innerHTML = '';
       // Check if there are any todos on the current list
@@ -92,15 +128,24 @@ const UICtrl = (function () {
     getSelectors: function () {
       return UISelectors;
     },
-    getTodoText: function () {
-      return document.querySelector(UISelectors.todoForm)['todo-text'].value;
+    getTodoText: function (form = 'todoForm') {
+      return document.querySelector(UISelectors[form])['form-text'].value;
     },
-    clearTodoForm: function () {
-      document.querySelector(UISelectors.todoForm)['todo-text'].value = '';
+    clearForm: function (formToClear) {
+      // formToClear - todoForm, subTodoForm, newProjectForm
+      document.querySelector(UISelectors[formToClear])['form-text'].value = '';
     },
-    addTodo: function (todo) {
-      const todoList = document.querySelector(UISelectors.todoList);
-      todoList.appendChild(todoItem(todo));
+    addTodo: function (todo, todoList = 'todoList') {
+      const list = document.querySelector(UISelectors[todoList]);
+      list.appendChild(todoItem(todo));
+    },
+    updateTodo: function (todo) {
+      const allTodos = document.querySelectorAll(UISelectors.todoListItem);
+      allTodos.forEach((todoEl) => {
+        if (parseInt(todoEl.dataset.todo_id) === todo.id) {
+          todoEl.querySelector('.todo-text').innerText = todo.text;
+        }
+      });
     },
     enableInput: function (input) {
       input.disabled = false;
@@ -114,7 +159,7 @@ const UICtrl = (function () {
     },
     deleteConfirmModal: function (itemToDeleteText) {
       const modal = document.createElement('div');
-      modal.classList = 'modal';
+      modal.classList = 'modal delete-modal';
       const modalContent = document.createElement('div');
       modalContent.classList = 'modal-content';
       const message = document.createElement('p');
@@ -136,8 +181,59 @@ const UICtrl = (function () {
 
       return modal;
     },
-    closeModal: function () {
-      document.querySelector(UISelectors.modal).remove();
+    todoModal: function (todo, currentProject, tab = subTasksTab) {
+      const modal = document.createElement('div');
+      modal.classList = 'modal todo-modal';
+      const modalContent = document.createElement('div');
+      modalContent.classList = 'modal-content';
+
+      const header = document.createElement('div');
+      header.classList = 'todo-modal-header';
+      const todoProject = document.createElement('span');
+      todoProject.innerText =
+        currentProject.charAt(0).toUpperCase() + currentProject.slice(1);
+      const closeBtn = document.createElement('button');
+      closeBtn.classList = 'close-modal-btn';
+      closeBtn.innerText = 'X';
+
+      const todoContent = document.createElement('div');
+      todoContent.classList = 'todo';
+      todoContent.dataset.todo_id = todo.id;
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.classList = 'checkbox';
+      checkbox.checked = todo.complete;
+      const todoText = document.createElement('input');
+      todoText.type = 'text';
+      todoText.classList = 'todo-text';
+      todoText.value = todo.text;
+      todoText.disabled = true;
+
+      const tabList = document.createElement('div');
+      tabList.classList = 'todo-modal-tab-list';
+      const subTasks = document.createElement('button');
+      subTasks.classList = 'todo-modal-sub-tasks-tab active';
+      subTasks.innerText = 'Sub-tasks';
+      const comments = document.createElement('button');
+      comments.classList = 'todo-modal-comments-tab';
+      comments.innerText = 'Comments';
+      const tabContent = document.createElement('div');
+      tabContent.classList = 'tab-content';
+
+      header.append(todoProject, closeBtn);
+      todoContent.append(checkbox, todoText);
+      tabList.append(subTasks, comments);
+      tabContent.appendChild(tab());
+      modalContent.append(header, todoContent, tabList, tabContent);
+      modal.appendChild(modalContent);
+
+      document.querySelector('body').appendChild(modal);
+
+      return modal;
+    },
+    closeModal: function (modalToClose) {
+      // modalToClose - todoModal, deleteModal
+      document.querySelector(UISelectors[modalToClose]).remove();
     },
     removeTodo: function (id) {
       const todo = document.querySelector(`[data-todo_id='${id}']`);

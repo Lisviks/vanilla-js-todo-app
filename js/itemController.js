@@ -1,8 +1,9 @@
 const ItemCtrl = (function () {
   // Todo constructor
-  const Todo = function (id, text) {
+  const Todo = function (id, text, todoRef = null) {
     this.id = id;
     this.text = text;
+    this.todoRef = todoRef;
     this.complete = false;
   };
 
@@ -11,11 +12,17 @@ const ItemCtrl = (function () {
     todos: StorageCtrl.getTodos(),
     currentProject: 'inbox',
     currentTodo: null,
+    deleteTodo: null,
   };
 
   return {
     getTodos: function () {
       return data.todos[data.currentProject];
+    },
+    getSubTodos: function () {
+      return data.todos[data.currentProject].filter(
+        (todo) => todo.todoRef === data.currentTodo.id
+      );
     },
     getProjects: function () {
       return Object.keys(data.todos);
@@ -37,6 +44,16 @@ const ItemCtrl = (function () {
 
       return todo;
     },
+    addSubTodo: function (text) {
+      const { todos, currentTodo, currentProject } = data;
+      const id = todos[currentProject].length
+        ? todos[currentProject][todos[currentProject].length - 1].id + 1
+        : 1;
+      const todo = new Todo(id, text, currentTodo.id);
+      todos[currentProject].push(todo);
+
+      return todo;
+    },
     getTodoById: function (id) {
       const todo = data.todos[data.currentProject].filter(
         (todo) => todo.id === id
@@ -46,8 +63,14 @@ const ItemCtrl = (function () {
     setCurrentTodo: function (todo) {
       data.currentTodo = todo;
     },
+    setDeleteTodo: function (todo) {
+      data.deleteTodo = todo;
+    },
     getCurrentTodo: function () {
       return data.currentTodo;
+    },
+    getDeleteTodo: function () {
+      return data.deleteTodo;
     },
     deleteTodo: function (id) {
       const { todos, currentProject } = data;
