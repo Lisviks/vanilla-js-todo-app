@@ -62,7 +62,7 @@ const AppCtrl = (function () {
     // Store in localStorage
     StorageCtrl.storeTodo(todo, currentProject);
     // Clear todo from input
-    UICtrl.clearTodoForm();
+    UICtrl.clearForm('todoForm');
   };
 
   const addSubTodo = function (e) {
@@ -70,17 +70,29 @@ const AppCtrl = (function () {
 
     const text = UICtrl.getTodoText('subTodoForm');
     const todo = ItemCtrl.addSubTodo(text);
-    UICtrl.addTodo(todo, 'subTodoList');
+    // Check if its the first sub-todo
     const currentTodo = ItemCtrl.getCurrentTodo();
+    const todos = ItemCtrl.getTodos().filter(
+      (todo) => todo.todoRef === currentTodo.id
+    );
+    if (todos.length === 1) {
+      // Remove Nothing todo... message by repopulating todo list
+      UICtrl.populateTodoList(todos, 'subTodoList');
+    } else {
+      // Else append new todo
+      // Add todo to UI list
+      UICtrl.addTodo(todo, 'subTodoList');
+    }
     const currentProject = ItemCtrl.getCurrentProject();
     StorageCtrl.storeTodo(todo, currentProject);
+    UICtrl.clearForm('subTodoForm');
   };
 
   const openDeleteConfirmModal = function (e) {
     const id = parseInt(e.target.parentElement.dataset.todo_id);
     const todo = ItemCtrl.getTodoById(id);
 
-    ItemCtrl.setCurrentTodo(todo);
+    ItemCtrl.setDeleteTodo(todo);
     const modal = UICtrl.deleteConfirmModal(todo.text);
 
     // Close modal events
@@ -101,14 +113,19 @@ const AppCtrl = (function () {
 
   const deleteTodo = function () {
     // Get todo id
-    const id = ItemCtrl.getCurrentTodo().id;
+    const id = ItemCtrl.getDeleteTodo().id;
     // Delete from data structure
     ItemCtrl.deleteTodo(id);
     // Check if there are any todos left in current project
-    const todos = ItemCtrl.getTodos();
-    if (!todos.length) {
+    const todos = ItemCtrl.getTodos().filter((todo) => todo.todoRef === null);
+    const currentTodo = ItemCtrl.getCurrentTodo();
+    const subTodos = ItemCtrl.getTodos().filter(
+      (todo) => todo.todoRef === currentTodo.id
+    );
+    if (!todos.length || !subTodos.length) {
       // Repopulate todo list with empty array to display nothing todo message
       UICtrl.populateTodoList(todos);
+      UICtrl.populateTodoList(subTodos, 'subTodoList');
     } else {
       // Else remove todo
       // Delete from UI

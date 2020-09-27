@@ -87,7 +87,7 @@ const UICtrl = (function () {
     const input = document.createElement('input');
     input.type = 'text';
     input.classList = 'todo-text';
-    input.id = 'todo-text';
+    input.id = 'form-text';
     input.autocomplete = false;
     const submitBtn = document.createElement('button');
     submitBtn.type = 'submit';
@@ -129,10 +129,11 @@ const UICtrl = (function () {
       return UISelectors;
     },
     getTodoText: function (form = 'todoForm') {
-      return document.querySelector(UISelectors[form])['todo-text'].value;
+      return document.querySelector(UISelectors[form])['form-text'].value;
     },
-    clearTodoForm: function () {
-      document.querySelector(UISelectors.todoForm)['todo-text'].value = '';
+    clearForm: function (formToClear) {
+      // formToClear - todoForm, subTodoForm, newProjectForm
+      document.querySelector(UISelectors[formToClear])['form-text'].value = '';
     },
     addTodo: function (todo, todoList = 'todoList') {
       const list = document.querySelector(UISelectors[todoList]);

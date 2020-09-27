@@ -12,6 +12,7 @@ const ItemCtrl = (function () {
     todos: StorageCtrl.getTodos(),
     currentProject: 'inbox',
     currentTodo: null,
+    deleteTodo: null,
   };
 
   return {
@@ -62,8 +63,14 @@ const ItemCtrl = (function () {
     setCurrentTodo: function (todo) {
       data.currentTodo = todo;
     },
+    setDeleteTodo: function (todo) {
+      data.deleteTodo = todo;
+    },
     getCurrentTodo: function () {
       return data.currentTodo;
+    },
+    getDeleteTodo: function () {
+      return data.deleteTodo;
     },
     deleteTodo: function (id) {
       const { todos, currentProject } = data;
