@@ -260,6 +260,7 @@ const AppCtrl = (function () {
 
   return {
     init: function () {
+      StorageCtrl.init();
       // Get project todos, while filtering out sub todos
       const todos = ItemCtrl.getTodos().filter((todo) => todo.todoRef === null);
       UICtrl.populateTodoList(todos);
