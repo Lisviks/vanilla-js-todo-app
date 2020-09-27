@@ -85,16 +85,17 @@ const AppCtrl = (function () {
 
     // Close modal events
     modal.addEventListener('click', (e) => {
-      if (e.target.classList.contains('modal')) UICtrl.closeModal();
+      if (e.target.classList.contains('delete-modal'))
+        UICtrl.closeModal('deleteModal');
     });
     modal
       .querySelector('.modal-cancel-btn')
-      .addEventListener('click', UICtrl.closeModal);
+      .addEventListener('click', () => UICtrl.closeModal('deleteModal'));
     // Delete todo event
     modal.querySelector('.modal-delete-btn').addEventListener('click', () => {
       deleteTodo();
       // Close modal
-      UICtrl.closeModal();
+      UICtrl.closeModal('deleteModal');
     });
   };
 
@@ -142,13 +143,26 @@ const AppCtrl = (function () {
       }
     });
 
+    const UISelectors = UICtrl.getSelectors();
+    document
+      .querySelector(UISelectors.subTodoList)
+      .addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) {
+          openDeleteConfirmModal(e);
+        } else if (e.target.classList.contains('checkbox')) {
+          toggleTodo(e);
+        } else if (e.target.classList.contains('todo-text')) {
+          // openTodoModal(e);
+        }
+      });
+
     // Close modal events
     todoModal.addEventListener('click', (e) => {
-      if (e.target.classList.contains('modal')) UICtrl.closeModal();
+      if (e.target.classList.contains('modal')) UICtrl.closeModal('todoModal');
     });
     todoModal
       .querySelector('.close-modal-btn')
-      .addEventListener('click', UICtrl.closeModal);
+      .addEventListener('click', () => UICtrl.closeModal('todoModal'));
   };
 
   const toggleTodo = function (e) {
@@ -168,7 +182,6 @@ const AppCtrl = (function () {
 
   const startEdit = function (e) {
     const id = parseInt(e.target.parentElement.dataset.todo_id);
-    const todo = ItemCtrl.getTodoById(id);
 
     const input = e.target;
     UICtrl.enableInput(input);
@@ -213,8 +226,8 @@ const AppCtrl = (function () {
     const id = e.target.id;
     // Set current project
     ItemCtrl.setCurrentProject(id);
-    // Get project todos
-    const todos = ItemCtrl.getTodos();
+    // Get project todos, while filtering out sub todos
+    const todos = ItemCtrl.getTodos().filter((todo) => todo.todoRef === null);
     // Change active project highlight
     UICtrl.changeProject(id);
     // Repopulate todos
@@ -230,6 +243,7 @@ const AppCtrl = (function () {
 
   return {
     init: function () {
+      // Get project todos, while filtering out sub todos
       const todos = ItemCtrl.getTodos().filter((todo) => todo.todoRef === null);
       UICtrl.populateTodoList(todos);
       const projects = ItemCtrl.getProjects();

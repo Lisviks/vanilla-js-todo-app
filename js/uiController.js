@@ -7,7 +7,8 @@ const UICtrl = (function () {
     subTodoList: '#sub-todo-list',
     projectList: '#project-list',
     deleteBtn: '.delete-btn',
-    modal: '.modal',
+    todoModal: '.todo-modal',
+    deleteModal: '.delete-modal',
     newProjectForm: '#new-project-form',
     projectItemWrapper: '.project-item-wrapper',
   };
@@ -157,7 +158,7 @@ const UICtrl = (function () {
     },
     deleteConfirmModal: function (itemToDeleteText) {
       const modal = document.createElement('div');
-      modal.classList = 'modal';
+      modal.classList = 'modal delete-modal';
       const modalContent = document.createElement('div');
       modalContent.classList = 'modal-content';
       const message = document.createElement('p');
@@ -229,8 +230,9 @@ const UICtrl = (function () {
 
       return modal;
     },
-    closeModal: function () {
-      document.querySelector(UISelectors.modal).remove();
+    closeModal: function (modalToClose) {
+      // modalToClose - todoModal, deleteModal
+      document.querySelector(UISelectors[modalToClose]).remove();
     },
     removeTodo: function (id) {
       const todo = document.querySelector(`[data-todo_id='${id}']`);
