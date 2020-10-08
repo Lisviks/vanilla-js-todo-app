@@ -112,28 +112,29 @@ const AppCtrl = (function () {
   };
 
   const deleteTodo = function () {
-    // Get todo id
-    const id = ItemCtrl.getDeleteTodo().id;
+    // Get todo to delete
+    const todoToDelete = ItemCtrl.getDeleteTodo();
     // Delete from data structure
-    ItemCtrl.deleteTodo(id);
-    // Check if there are any todos left in current project
+    ItemCtrl.deleteTodo(todoToDelete.id);
+    // Get todos without sub todos
     const todos = ItemCtrl.getTodos().filter((todo) => todo.todoRef === null);
-    const currentTodo = ItemCtrl.getCurrentTodo();
     const subTodos = ItemCtrl.getTodos().filter(
-      (todo) => todo.todoRef === currentTodo.id
+      (todo) => todo.todoRef === todoToDelete.id
     );
+    // Check if there are any todos left in current project
     if (!todos.length || !subTodos.length) {
       // Repopulate todo list with empty array to display nothing todo message
-      UICtrl.populateTodoList(todos);
-      UICtrl.populateTodoList(subTodos, 'subTodoList');
+      todoToDelete.todoRef === null
+        ? UICtrl.populateTodoList(todos)
+        : UICtrl.populateTodoList(subTodos, 'subTodoList');
     } else {
       // Else remove todo
       // Delete from UI
-      UICtrl.removeTodo(id);
+      UICtrl.removeTodo(todoToDelete.id);
     }
     // Delete from localStorage
     const currentProject = ItemCtrl.getCurrentProject();
-    StorageCtrl.deleteTodo(id, currentProject);
+    StorageCtrl.deleteTodo(todoToDelete.id, currentProject);
   };
 
   const openTodoModal = function (e) {
