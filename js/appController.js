@@ -112,15 +112,26 @@ const AppCtrl = (function () {
   };
 
   const deleteTodo = function () {
+    const currentProject = ItemCtrl.getCurrentProject();
     // Get todo to delete
     const todoToDelete = ItemCtrl.getDeleteTodo();
     // Delete from data structure
     ItemCtrl.deleteTodo(todoToDelete.id);
     // Get todos without sub todos
     const todos = ItemCtrl.getTodos().filter((todo) => todo.todoRef === null);
+    // Get sub todos
     const subTodos = ItemCtrl.getTodos().filter(
       (todo) => todo.todoRef === todoToDelete.id
     );
+    // Check if todo is main todo
+    if (todoToDelete.todoRef === null) {
+      subTodos.forEach((todo) => {
+        if (todo.todoRef === todoToDelete.id) {
+          ItemCtrl.deleteTodo(todo.id);
+          StorageCtrl.deleteTodo(todo.id, currentProject);
+        }
+      });
+    }
     // Check if there are any todos left in current project
     if (!todos.length || !subTodos.length) {
       // Repopulate todo list with empty array to display nothing todo message
@@ -133,7 +144,6 @@ const AppCtrl = (function () {
       UICtrl.removeTodo(todoToDelete.id);
     }
     // Delete from localStorage
-    const currentProject = ItemCtrl.getCurrentProject();
     StorageCtrl.deleteTodo(todoToDelete.id, currentProject);
   };
 
