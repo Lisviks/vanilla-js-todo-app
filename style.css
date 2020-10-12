@@ -139,7 +139,7 @@ h3 {
   position: relative;
 }
 
-.todo-form .input-field .todo-text {
+.todo-form .input-field .todo-text, .comment-text {
   width: 100%;
   padding: .5rem .8rem;
   border: 1px solid #555;
@@ -150,7 +150,7 @@ h3 {
   outline: none;
 }
 
-.todo-form .input-field .todo-text:focus {
+.todo-form .input-field .todo-text:focus, .comment-text:focus {
   border-color: #f08741;
 }
 

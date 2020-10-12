@@ -71,38 +71,6 @@ const UICtrl = (function () {
     return listItemWrapper;
   };
 
-  const subTasksTab = function () {
-    const subTodoTabContent = document.createElement('div');
-    subTodoTabContent.classList = 'sub-todo-tab-content';
-
-    const todoList = document.createElement('ul');
-    todoList.classList = 'todo-list';
-    todoList.id = 'sub-todo-list';
-
-    const todoForm = document.createElement('form');
-    todoForm.classList = 'todo-form';
-    todoForm.id = 'sub-todo-form';
-    const inputField = document.createElement('div');
-    inputField.classList = 'input-field';
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.classList = 'todo-text';
-    input.id = 'form-text';
-    input.autocomplete = false;
-    const submitBtn = document.createElement('button');
-    submitBtn.type = 'submit';
-    submitBtn.classList = 'add-btn btn';
-    submitBtn.innerText = 'Add Task';
-
-    inputField.appendChild(input);
-    todoForm.append(inputField, submitBtn);
-    subTodoTabContent.append(todoList, todoForm);
-
-    return subTodoTabContent;
-  };
-
-  const commentsTab = function () {};
-
   return {
     populateTodoList: function (todos, listToPopulate = 'todoList') {
       const todoList = document.querySelector(UISelectors[listToPopulate]);
@@ -181,7 +149,63 @@ const UICtrl = (function () {
 
       return modal;
     },
-    todoModal: function (todo, currentProject, tab = subTasksTab) {
+    subTasksTab: function () {
+      const subTodoTabContent = document.createElement('div');
+      subTodoTabContent.classList = 'sub-todo-tab-content';
+
+      const todoList = document.createElement('ul');
+      todoList.classList = 'todo-list';
+      todoList.id = 'sub-todo-list';
+
+      const todoForm = document.createElement('form');
+      todoForm.classList = 'todo-form';
+      todoForm.id = 'sub-todo-form';
+      const inputField = document.createElement('div');
+      inputField.classList = 'input-field';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.classList = 'todo-text';
+      input.id = 'form-text';
+      input.autocomplete = false;
+      const submitBtn = document.createElement('button');
+      submitBtn.type = 'submit';
+      submitBtn.classList = 'add-btn btn';
+      submitBtn.innerText = 'Add Task';
+
+      inputField.appendChild(input);
+      todoForm.append(inputField, submitBtn);
+      subTodoTabContent.append(todoList, todoForm);
+
+      return subTodoTabContent;
+    },
+    commentsTab: function () {
+      const commentsTabContent = document.createElement('div');
+      commentsTabContent.classList = 'comments-tab-content';
+
+      const comments = document.createElement('ul');
+      comments.classList = 'comments-list';
+
+      const commentsForm = document.createElement('form');
+      commentsForm.classList = 'comments-form';
+      const inputField = document.createElement('div');
+      inputField.classList = 'input-field';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.classList = 'comment-text';
+      input.id = 'form-text';
+      input.autocomplete = false;
+      const submitBtn = document.createElement('button');
+      submitBtn.type = 'submit';
+      submitBtn.classList = 'add-btn btn';
+      submitBtn.innerText = 'Add Comment';
+
+      inputField.appendChild(input);
+      commentsForm.append(inputField, submitBtn);
+      commentsTabContent.append(comments, commentsForm);
+
+      return commentsTabContent;
+    },
+    todoModal: function (todo, currentProject, tab) {
       const modal = document.createElement('div');
       modal.classList = 'modal todo-modal';
       const modalContent = document.createElement('div');
@@ -212,10 +236,10 @@ const UICtrl = (function () {
       const tabList = document.createElement('div');
       tabList.classList = 'todo-modal-tab-list';
       const subTasks = document.createElement('button');
-      subTasks.classList = 'todo-modal-sub-tasks-tab active';
+      subTasks.classList = 'todo-modal-sub-tasks-tab tab-btn active';
       subTasks.innerText = 'Sub-tasks';
       const comments = document.createElement('button');
-      comments.classList = 'todo-modal-comments-tab';
+      comments.classList = 'todo-modal-comments-tab tab-btn';
       comments.innerText = 'Comments';
       const tabContent = document.createElement('div');
       tabContent.classList = 'tab-content';
@@ -223,7 +247,7 @@ const UICtrl = (function () {
       header.append(todoProject, closeBtn);
       todoContent.append(checkbox, todoText);
       tabList.append(subTasks, comments);
-      tabContent.appendChild(tab());
+      tabContent.appendChild(tab);
       modalContent.append(header, todoContent, tabList, tabContent);
       modal.appendChild(modalContent);
 

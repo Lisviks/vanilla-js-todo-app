@@ -137,12 +137,32 @@ const AppCtrl = (function () {
     StorageCtrl.deleteTodo(todoToDelete.id, currentProject);
   };
 
+  const switchTab = function (e) {
+    // Remove active class from all tabs
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach((tab) => tab.classList.remove('active'));
+    // Add active class to the tab that was clicked
+    e.target.classList.add('active');
+    // Switch tab content
+    const tabContent = document.querySelector('.tab-content');
+    tabContent.innerHTML = '';
+    // Check which tab was clicked
+    if (e.target.classList.contains('todo-modal-sub-tasks-tab')) {
+      tabContent.appendChild(UICtrl.subTasksTab());
+      const subTodos = ItemCtrl.getSubTodos();
+      UICtrl.populateTodoList(subTodos, 'subTodoList');
+    } else if (e.target.classList.contains('todo-modal-comments-tab')) {
+      tabContent.appendChild(UICtrl.commentsTab());
+    }
+  };
+
   const openTodoModal = function (e) {
     const id = parseInt(e.target.parentElement.parentElement.dataset.todo_id);
     const todo = ItemCtrl.getTodoById(id);
     ItemCtrl.setCurrentTodo(todo);
     const currentProject = ItemCtrl.getCurrentProject();
-    const todoModal = UICtrl.todoModal(todo, currentProject);
+    const subTasksTab = UICtrl.subTasksTab();
+    const todoModal = UICtrl.todoModal(todo, currentProject, subTasksTab);
 
     const subTodos = ItemCtrl.getSubTodos();
     UICtrl.populateTodoList(subTodos, 'subTodoList');
@@ -151,6 +171,11 @@ const AppCtrl = (function () {
     todoModal
       .querySelector('#sub-todo-form')
       .addEventListener('submit', addSubTodo);
+
+    // Switch tab event
+    todoModal
+      .querySelector('.todo-modal-tab-list')
+      .addEventListener('click', switchTab);
 
     // Edit todo event
     todoModal.querySelector('.todo').addEventListener('click', (e) => {
