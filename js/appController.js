@@ -167,6 +167,17 @@ const AppCtrl = (function () {
     UICtrl.clearCommentForm();
   };
 
+  const deleteComment = function (e) {
+    if (e.target.classList.contains('delete-btn')) {
+      const id = parseInt(e.target.parentElement.dataset.comment_id);
+      ItemCtrl.deleteComment(id);
+      UICtrl.deleteComment(id);
+      const todo = ItemCtrl.getCurrentTodo();
+      const currentProject = ItemCtrl.getCurrentProject();
+      StorageCtrl.updateTodo(todo, currentProject);
+    }
+  };
+
   const switchTab = function (e) {
     // Remove active class from all tabs
     const tabs = document.querySelectorAll('.tab-btn');
@@ -191,6 +202,10 @@ const AppCtrl = (function () {
       document
         .querySelector('.comments-form')
         .addEventListener('submit', addComment);
+
+      document
+        .querySelector('.comments-list')
+        .addEventListener('click', deleteComment);
     }
   };
 

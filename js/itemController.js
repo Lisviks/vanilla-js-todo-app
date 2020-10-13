@@ -75,6 +75,14 @@ const ItemCtrl = (function () {
       });
       return currentTodo;
     },
+    deleteComment: function (id) {
+      const { currentTodo } = data;
+      currentTodo.comments.forEach((comment, index) => {
+        if (comment.id === id) {
+          currentTodo.comments.splice(index, 1);
+        }
+      });
+    },
     getTodoById: function (id) {
       const todo = data.todos[data.currentProject].filter(
         (todo) => todo.id === id

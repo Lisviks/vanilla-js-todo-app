@@ -153,6 +153,10 @@ const UICtrl = (function () {
       const comment = commentItem(commentObj);
       document.querySelector(UISelectors.commentsList).appendChild(comment);
     },
+    deleteComment: function (id) {
+      const comment = document.querySelector(`[data-comment_id='${id}']`);
+      comment.remove();
+    },
     clearCommentForm: function () {
       document.querySelector(UISelectors.commentsForm)['form-text'].value = '';
     },
