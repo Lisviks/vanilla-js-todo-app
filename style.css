@@ -331,3 +331,21 @@ h3 {
 .todo-modal-tab-list button.active {
   border-bottom-color: #fff;
 }
+
+/* Comments */
+
+.comments-list {
+  list-style: none;
+}
+
+.comment-list-item {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0.3rem;
+  letter-spacing: 0;
+}
+
+.comment-list-item:last-of-type {
+  margin-bottom: 1rem;
+}

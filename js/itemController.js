@@ -5,6 +5,13 @@ const ItemCtrl = (function () {
     this.text = text;
     this.todoRef = todoRef;
     this.complete = false;
+    this.comments = [];
+  };
+
+  // Comments constructor
+  const Comment = function (id, text) {
+    this.id = id;
+    this.text = text;
   };
 
   // Data Structure / State
@@ -53,6 +60,20 @@ const ItemCtrl = (function () {
       todos[currentProject].push(todo);
 
       return todo;
+    },
+    addComment: function (text) {
+      const { currentTodo, todos, currentProject } = data;
+
+      todos[currentProject].forEach((todo) => {
+        if (todo.id === currentTodo.id) {
+          const id = todo.comments.length
+            ? todo.comments[todo.comments.length - 1].id + 1
+            : 1;
+          const comment = new Comment(id, text);
+          todo.comments.push(comment);
+        }
+      });
+      return currentTodo;
     },
     getTodoById: function (id) {
       const todo = data.todos[data.currentProject].filter(

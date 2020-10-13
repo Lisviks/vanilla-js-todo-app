@@ -11,6 +11,8 @@ const UICtrl = (function () {
     deleteModal: '.delete-modal',
     newProjectForm: '#new-project-form',
     projectItemWrapper: '.project-item-wrapper',
+    commentsList: '.comments-list',
+    commentsForm: '.comments-form',
   };
 
   // Todo html list item
@@ -71,6 +73,29 @@ const UICtrl = (function () {
     return listItemWrapper;
   };
 
+  const commentItem = function (comment) {
+    const listItem = document.createElement('li');
+    listItem.classList = 'comment-list-item';
+    listItem.dataset.comment_id = comment.id;
+
+    const commentContent = document.createElement('div');
+    commentContent.classList = 'comment';
+
+    const commentText = document.createElement('span');
+    commentText.type = 'text';
+    commentText.classList = 'comment-content';
+    commentText.innerText = comment.text;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.classList = 'delete-btn';
+    deleteBtn.innerText = 'X';
+
+    commentContent.append(commentText);
+    listItem.append(commentContent, deleteBtn);
+
+    return listItem;
+  };
+
   return {
     populateTodoList: function (todos, listToPopulate = 'todoList') {
       const todoList = document.querySelector(UISelectors[listToPopulate]);
@@ -93,6 +118,15 @@ const UICtrl = (function () {
         projectList.appendChild(projectItem(project))
       );
     },
+    populateCommentsList: function (comments) {
+      const commentsList = document.querySelector(UISelectors.commentsList);
+      comments.length
+        ? comments.forEach((comment) =>
+            commentsList.appendChild(commentItem(comment))
+          )
+        : (commentsList.innerHTML =
+            '<h3 class="no-comments">No comments...</h3>');
+    },
     getSelectors: function () {
       return UISelectors;
     },
@@ -114,6 +148,13 @@ const UICtrl = (function () {
           todoEl.querySelector('.todo-text').innerText = todo.text;
         }
       });
+    },
+    addComment: function (commentObj) {
+      const comment = commentItem(commentObj);
+      document.querySelector(UISelectors.commentsList).appendChild(comment);
+    },
+    clearCommentForm: function () {
+      document.querySelector(UISelectors.commentsForm)['form-text'].value = '';
     },
     enableInput: function (input) {
       input.disabled = false;

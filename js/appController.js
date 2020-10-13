@@ -38,6 +38,21 @@ const AppCtrl = (function () {
       });
   };
 
+  const subTaskEvents = function (e) {
+    const UISelectors = UICtrl.getSelectors();
+    document
+      .querySelector(UISelectors.subTodoList)
+      .addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) {
+          openDeleteConfirmModal(e);
+        } else if (e.target.classList.contains('checkbox')) {
+          toggleTodo(e);
+        } else if (e.target.classList.contains('todo-text')) {
+          // openTodoModal(e);
+        }
+      });
+  };
+
   const addTodo = function (e) {
     e.preventDefault();
     // Get todo text from UI Controller
@@ -137,6 +152,21 @@ const AppCtrl = (function () {
     StorageCtrl.deleteTodo(todoToDelete.id, currentProject);
   };
 
+  const addComment = function (e) {
+    e.preventDefault();
+    // Get text from comment form input
+    const commentsForm = document.querySelector('.comments-form');
+    const inputText = commentsForm['form-text'].value;
+    // Save comment on current todo to ls and ItemCtrl
+    const todo = ItemCtrl.addComment(inputText);
+    const currentProject = ItemCtrl.getCurrentProject();
+    StorageCtrl.updateTodo(todo, currentProject);
+    // Display new comment
+    UICtrl.addComment(todo.comments[todo.comments.length - 1]);
+    // Clear form
+    UICtrl.clearCommentForm();
+  };
+
   const switchTab = function (e) {
     // Remove active class from all tabs
     const tabs = document.querySelectorAll('.tab-btn');
@@ -151,8 +181,16 @@ const AppCtrl = (function () {
       tabContent.appendChild(UICtrl.subTasksTab());
       const subTodos = ItemCtrl.getSubTodos();
       UICtrl.populateTodoList(subTodos, 'subTodoList');
+      subTaskEvents(e);
     } else if (e.target.classList.contains('todo-modal-comments-tab')) {
       tabContent.appendChild(UICtrl.commentsTab());
+      const currentTodo = ItemCtrl.getCurrentTodo();
+      UICtrl.populateCommentsList(currentTodo.comments);
+
+      // Comments tab events
+      document
+        .querySelector('.comments-form')
+        .addEventListener('submit', addComment);
     }
   };
 
@@ -186,18 +224,7 @@ const AppCtrl = (function () {
       }
     });
 
-    const UISelectors = UICtrl.getSelectors();
-    document
-      .querySelector(UISelectors.subTodoList)
-      .addEventListener('click', (e) => {
-        if (e.target.classList.contains('delete-btn')) {
-          openDeleteConfirmModal(e);
-        } else if (e.target.classList.contains('checkbox')) {
-          toggleTodo(e);
-        } else if (e.target.classList.contains('todo-text')) {
-          // openTodoModal(e);
-        }
-      });
+    subTaskEvents(e);
 
     // Close modal events
     todoModal.addEventListener('click', (e) => {
