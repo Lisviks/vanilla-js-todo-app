@@ -38,6 +38,21 @@ const AppCtrl = (function () {
       });
   };
 
+  const subTaskEvents = function (e) {
+    const UISelectors = UICtrl.getSelectors();
+    document
+      .querySelector(UISelectors.subTodoList)
+      .addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) {
+          openDeleteConfirmModal(e);
+        } else if (e.target.classList.contains('checkbox')) {
+          toggleTodo(e);
+        } else if (e.target.classList.contains('todo-text')) {
+          // openTodoModal(e);
+        }
+      });
+  };
+
   const addTodo = function (e) {
     e.preventDefault();
     // Get todo text from UI Controller
@@ -147,12 +162,70 @@ const AppCtrl = (function () {
     StorageCtrl.deleteTodo(todoToDelete.id, currentProject);
   };
 
+  const addComment = function (e) {
+    e.preventDefault();
+    // Get text from comment form input
+    const commentsForm = document.querySelector('.comments-form');
+    const inputText = commentsForm['form-text'].value;
+    // Save comment on current todo to ls and ItemCtrl
+    const todo = ItemCtrl.addComment(inputText);
+    const currentProject = ItemCtrl.getCurrentProject();
+    StorageCtrl.updateTodo(todo, currentProject);
+    // Display new comment
+    UICtrl.addComment(todo.comments[todo.comments.length - 1]);
+    // Clear form
+    UICtrl.clearCommentForm();
+  };
+
+  const deleteComment = function (e) {
+    if (e.target.classList.contains('delete-btn')) {
+      const id = parseInt(e.target.parentElement.dataset.comment_id);
+      ItemCtrl.deleteComment(id);
+      UICtrl.deleteComment(id);
+      const todo = ItemCtrl.getCurrentTodo();
+      const currentProject = ItemCtrl.getCurrentProject();
+      StorageCtrl.updateTodo(todo, currentProject);
+    }
+  };
+
+  const switchTab = function (e) {
+    // Remove active class from all tabs
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach((tab) => tab.classList.remove('active'));
+    // Add active class to the tab that was clicked
+    e.target.classList.add('active');
+    // Switch tab content
+    const tabContent = document.querySelector('.tab-content');
+    tabContent.innerHTML = '';
+    // Check which tab was clicked
+    if (e.target.classList.contains('todo-modal-sub-tasks-tab')) {
+      tabContent.appendChild(UICtrl.subTasksTab());
+      const subTodos = ItemCtrl.getSubTodos();
+      UICtrl.populateTodoList(subTodos, 'subTodoList');
+      subTaskEvents(e);
+    } else if (e.target.classList.contains('todo-modal-comments-tab')) {
+      tabContent.appendChild(UICtrl.commentsTab());
+      const currentTodo = ItemCtrl.getCurrentTodo();
+      UICtrl.populateCommentsList(currentTodo.comments);
+
+      // Comments tab events
+      document
+        .querySelector('.comments-form')
+        .addEventListener('submit', addComment);
+
+      document
+        .querySelector('.comments-list')
+        .addEventListener('click', deleteComment);
+    }
+  };
+
   const openTodoModal = function (e) {
     const id = parseInt(e.target.parentElement.parentElement.dataset.todo_id);
     const todo = ItemCtrl.getTodoById(id);
     ItemCtrl.setCurrentTodo(todo);
     const currentProject = ItemCtrl.getCurrentProject();
-    const todoModal = UICtrl.todoModal(todo, currentProject);
+    const subTasksTab = UICtrl.subTasksTab();
+    const todoModal = UICtrl.todoModal(todo, currentProject, subTasksTab);
 
     const subTodos = ItemCtrl.getSubTodos();
     UICtrl.populateTodoList(subTodos, 'subTodoList');
@@ -161,6 +234,11 @@ const AppCtrl = (function () {
     todoModal
       .querySelector('#sub-todo-form')
       .addEventListener('submit', addSubTodo);
+
+    // Switch tab event
+    todoModal
+      .querySelector('.todo-modal-tab-list')
+      .addEventListener('click', switchTab);
 
     // Edit todo event
     todoModal.querySelector('.todo').addEventListener('click', (e) => {
@@ -171,18 +249,7 @@ const AppCtrl = (function () {
       }
     });
 
-    const UISelectors = UICtrl.getSelectors();
-    document
-      .querySelector(UISelectors.subTodoList)
-      .addEventListener('click', (e) => {
-        if (e.target.classList.contains('delete-btn')) {
-          openDeleteConfirmModal(e);
-        } else if (e.target.classList.contains('checkbox')) {
-          toggleTodo(e);
-        } else if (e.target.classList.contains('todo-text')) {
-          // openTodoModal(e);
-        }
-      });
+    subTaskEvents(e);
 
     // Close modal events
     todoModal.addEventListener('click', (e) => {

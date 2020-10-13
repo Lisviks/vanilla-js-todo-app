@@ -139,7 +139,7 @@ h3 {
   position: relative;
 }
 
-.todo-form .input-field .todo-text {
+.todo-form .input-field .todo-text, .comment-text {
   width: 100%;
   padding: .5rem .8rem;
   border: 1px solid #555;
@@ -150,7 +150,7 @@ h3 {
   outline: none;
 }
 
-.todo-form .input-field .todo-text:focus {
+.todo-form .input-field .todo-text:focus, .comment-text:focus {
   border-color: #f08741;
 }
 
@@ -330,4 +330,22 @@ h3 {
 
 .todo-modal-tab-list button.active {
   border-bottom-color: #fff;
+}
+
+/* Comments */
+
+.comments-list {
+  list-style: none;
+}
+
+.comment-list-item {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0.3rem;
+  letter-spacing: 0;
+}
+
+.comment-list-item:last-of-type {
+  margin-bottom: 1rem;
 }
