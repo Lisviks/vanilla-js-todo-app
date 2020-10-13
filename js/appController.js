@@ -40,6 +40,12 @@ const AppCtrl = (function () {
 
   const subTaskEvents = function (e) {
     const UISelectors = UICtrl.getSelectors();
+
+    // Add sub todo event
+    document
+      .querySelector('#sub-todo-form')
+      .addEventListener('submit', addSubTodo);
+
     document
       .querySelector(UISelectors.subTodoList)
       .addEventListener('click', (e) => {
@@ -134,9 +140,11 @@ const AppCtrl = (function () {
     ItemCtrl.deleteTodo(todoToDelete.id);
     // Get todos without sub todos
     const todos = ItemCtrl.getTodos().filter((todo) => todo.todoRef === null);
+    // Get current todo
+    const currentTodo = ItemCtrl.getCurrentTodo();
     // Get sub todos
     const subTodos = ItemCtrl.getTodos().filter(
-      (todo) => todo.todoRef === todoToDelete.id
+      (todo) => todoToDelete.todoRef === currentTodo.id
     );
     // Check if todo is main todo
     if (todoToDelete.todoRef === null) {
@@ -229,11 +237,6 @@ const AppCtrl = (function () {
 
     const subTodos = ItemCtrl.getSubTodos();
     UICtrl.populateTodoList(subTodos, 'subTodoList');
-
-    // Add sub todo event
-    todoModal
-      .querySelector('#sub-todo-form')
-      .addEventListener('submit', addSubTodo);
 
     // Switch tab event
     todoModal
