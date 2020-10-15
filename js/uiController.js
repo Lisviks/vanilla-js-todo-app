@@ -52,7 +52,7 @@ const UICtrl = (function () {
     const listItem = document.createElement('div');
     listItem.id = project.toLowerCase();
     listItem.classList =
-      project === 'inbox' ? 'sidenav-item active' : 'sidenav-item';
+      project === 'inbox' ? 'navbar-item active' : 'navbar-item';
     listItem.innerText = projectTitle;
 
     const listItemDeleteBtn = document.createElement('button');
