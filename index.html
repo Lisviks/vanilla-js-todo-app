@@ -7,54 +7,24 @@
     <title>todos</title>
   </head>
   <body>
+    <nav class="navbar open">
+      <ul id="project-list" class="navbar-list"></ul>
+      <form class="new-project-form" id="new-project-form">
+        <label for="project-name">Project Name:</label>
+        <input type="text" id="project-name" />
+        <button class="new-project-btn">+</button>
+      </form>
+    </nav>
     <div class="container">
       <header>
         <h1>todos</h1>
+        <div id="hamburgerBtn">&#9776</div>
       </header>
 
-      <aside class="sidenav">
-        <ul id="project-list" class="sidenav-list">
-          <!-- <li id="inbox" class="inbox sidenav-item active">Inbox</li>
-          <li id="important" class="important sidenav-item">Important</li> -->
-        </ul>
-        <form class="new-project-form" id="new-project-form">
-          <label for="project-name">Project Name:</label>
-          <input type="text" id="project-name" />
-          <button class="new-project-btn">+</button>
-        </form>
-      </aside>
+        
 
       <div class="app">
-        <ul id="todo-list" class="todo-list">
-          <li class="todo-list-item" data-todo_id="1">
-            <div class="todo">
-              <input type="checkbox" id="1" class="checkbox" />
-              <label for="1">Lorem ipsum dolor sit amet.</label>
-            </div>
-            <button class="delete-btn">X</button>
-          </li>
-          <li class="todo-list-item" data-todo_id="2">
-            <div class="todo">
-              <input type="checkbox" id="2" class="checkbox" />
-              <label for="2">Lorem ipsum dolor sit amet.</label>
-            </div>
-            <button class="delete-btn">X</button>
-          </li>
-          <li class="todo-list-item" data-todo_id="3">
-            <div class="todo">
-              <input type="checkbox" id="3" class="checkbox" />
-              <label for="3">Lorem ipsum dolor sit amet.</label>
-            </div>
-            <button class="delete-btn">X</button>
-          </li>
-          <li class="todo-list-item" data-todo_id="4">
-            <div class="todo">
-              <input type="checkbox" id="4" class="checkbox" />
-              <label for="4">Lorem ipsum dolor sit amet.</label>
-            </div>
-            <button class="delete-btn">X</button>
-          </li>
-        </ul>
+        <ul id="todo-list" class="todo-list"></ul>
 
         <form class="todo-form" id="todo-form">
           <div class="input-field">

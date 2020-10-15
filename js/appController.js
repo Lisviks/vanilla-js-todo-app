@@ -30,7 +30,7 @@ const AppCtrl = (function () {
     document
       .querySelector(UISelectors.projectList)
       .addEventListener('click', (e) => {
-        if (e.target.classList.contains('sidenav-item')) {
+        if (e.target.classList.contains('navbar-item')) {
           changeProject(e);
         } else if (e.target.classList.contains('delete-btn')) {
           deleteProject(e);
@@ -57,6 +57,15 @@ const AppCtrl = (function () {
           // openTodoModal(e);
         }
       });
+  };
+
+  const navbarToggle = function () {
+    const hamburgerBtn = document.querySelector('#hamburgerBtn');
+    const navbar = document.querySelector('.navbar');
+
+    hamburgerBtn.addEventListener('click', () => {
+      navbar.classList.toggle('open');
+    });
   };
 
   const addTodo = function (e) {
@@ -350,6 +359,7 @@ const AppCtrl = (function () {
 
       // Load event listeners
       loadEventListeners();
+      navbarToggle();
     },
   };
 })();
