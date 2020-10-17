@@ -4,67 +4,52 @@ const AppCtrl = (function () {
     const UISelectors = UICtrl.getSelectors();
 
     // Add todo event
-    document
-      .querySelector(UISelectors.todoForm)
-      .addEventListener('submit', addTodo);
+    $on($(UISelectors.todoForm), 'submit', addTodo);
 
     // Todo list events
-    document
-      .querySelector(UISelectors.todoList)
-      .addEventListener('click', (e) => {
-        if (e.target.classList.contains('delete-btn')) {
-          openDeleteConfirmModal(e);
-        } else if (e.target.classList.contains('checkbox')) {
-          toggleTodo(e);
-        } else if (e.target.classList.contains('todo-text')) {
-          openTodoModal(e);
-        }
-      });
+    $on($(UISelectors.todoList), 'click', (e) => {
+      if (e.target.classList.contains('delete-btn')) {
+        openDeleteConfirmModal(e);
+      } else if (e.target.classList.contains('checkbox')) {
+        toggleTodo(e);
+      } else if (e.target.classList.contains('todo-text')) {
+        openTodoModal(e);
+      }
+    });
 
     // Create new project
-    document
-      .querySelector(UISelectors.newProjectForm)
-      .addEventListener('submit', createProject);
+    $on($(UISelectors.newProjectForm), 'submit', createProject);
 
     // Project list events
-    document
-      .querySelector(UISelectors.projectList)
-      .addEventListener('click', (e) => {
-        if (e.target.classList.contains('navbar-item')) {
-          changeProject(e);
-        } else if (e.target.classList.contains('delete-btn')) {
-          deleteProject(e);
-        }
-      });
+    $on($(UISelectors.projectList), 'click', (e) => {
+      if (e.target.classList.contains('navbar-item')) {
+        changeProject(e);
+      } else if (e.target.classList.contains('delete-btn')) {
+        deleteProject(e);
+      }
+    });
   };
 
   const subTaskEvents = function (e) {
     const UISelectors = UICtrl.getSelectors();
 
     // Add sub todo event
-    document
-      .querySelector('#sub-todo-form')
-      .addEventListener('submit', addSubTodo);
+    $on($(UISelectors.subTodoForm), 'submit', addSubTodo);
 
-    document
-      .querySelector(UISelectors.subTodoList)
-      .addEventListener('click', (e) => {
-        if (e.target.classList.contains('delete-btn')) {
-          openDeleteConfirmModal(e);
-        } else if (e.target.classList.contains('checkbox')) {
-          toggleTodo(e);
-        } else if (e.target.classList.contains('todo-text')) {
-          // openTodoModal(e);
-        }
-      });
+    $on($(UISelectors.subTodoList), 'click', (e) => {
+      if (e.target.classList.contains('delete-btn')) {
+        openDeleteConfirmModal(e);
+      } else if (e.target.classList.contains('checkbox')) {
+        toggleTodo(e);
+      } else if (e.target.classList.contains('todo-text')) {
+        // openTodoModal(e);
+      }
+    });
   };
 
   const navbarToggle = function () {
-    const hamburgerBtn = document.querySelector('#hamburgerBtn');
-    const navbar = document.querySelector('.navbar');
-
-    hamburgerBtn.addEventListener('click', () => {
-      navbar.classList.toggle('open');
+    $on($('#hamburgerBtn'), 'click', () => {
+      $('.navbar').classList.toggle('open');
     });
   };
 
@@ -126,17 +111,19 @@ const AppCtrl = (function () {
     const modal = UICtrl.deleteConfirmModal(todo.text);
 
     // Close modal events
-    modal.addEventListener('click', (e) => {
+    $on(modal, 'click', (e) => {
       if (e.target.classList.contains('delete-modal'))
         UICtrl.closeModal('deleteModal');
     });
-    modal
-      .querySelector('.modal-cancel-btn')
-      .addEventListener('click', () => UICtrl.closeModal('deleteModal'));
+    // modal
+    //   .querySelector('.modal-cancel-btn')
+    //   .addEventListener('click', () => UICtrl.closeModal('deleteModal'));
+    $on($('.modal-cancel-btn', modal), 'click', () =>
+      UICtrl.closeModal('deleteModal')
+    );
     // Delete todo event
-    modal.querySelector('.modal-delete-btn').addEventListener('click', () => {
+    $on($('.modal-delete-btn', modal), 'click', () => {
       deleteTodo();
-      // Close modal
       UICtrl.closeModal('deleteModal');
     });
   };
@@ -182,7 +169,7 @@ const AppCtrl = (function () {
   const addComment = function (e) {
     e.preventDefault();
     // Get text from comment form input
-    const commentsForm = document.querySelector('.comments-form');
+    const commentsForm = $('.comments-form');
     const inputText = commentsForm['form-text'].value;
     // Save comment on current todo to ls and ItemCtrl
     const todo = ItemCtrl.addComment(inputText);
@@ -207,12 +194,12 @@ const AppCtrl = (function () {
 
   const switchTab = function (e) {
     // Remove active class from all tabs
-    const tabs = document.querySelectorAll('.tab-btn');
+    const tabs = $$('.tab-btn');
     tabs.forEach((tab) => tab.classList.remove('active'));
     // Add active class to the tab that was clicked
     e.target.classList.add('active');
     // Switch tab content
-    const tabContent = document.querySelector('.tab-content');
+    const tabContent = $('.tab-content');
     tabContent.innerHTML = '';
     // Check which tab was clicked
     if (e.target.classList.contains('todo-modal-sub-tasks-tab')) {
@@ -226,13 +213,9 @@ const AppCtrl = (function () {
       UICtrl.populateCommentsList(currentTodo.comments);
 
       // Comments tab events
-      document
-        .querySelector('.comments-form')
-        .addEventListener('submit', addComment);
+      $on($('.comments-form'), 'submit', addComment);
 
-      document
-        .querySelector('.comments-list')
-        .addEventListener('click', deleteComment);
+      $on($('.comments-list'), 'click', deleteComment);
     }
   };
 
@@ -248,12 +231,10 @@ const AppCtrl = (function () {
     UICtrl.populateTodoList(subTodos, 'subTodoList');
 
     // Switch tab event
-    todoModal
-      .querySelector('.todo-modal-tab-list')
-      .addEventListener('click', switchTab);
+    $on($('.todo-modal-tab-list', todoModal), 'click', switchTab);
 
     // Edit todo event
-    todoModal.querySelector('.todo').addEventListener('click', (e) => {
+    $on($('.todo', todoModal), 'click', (e) => {
       if (e.target.classList.contains('checkbox')) {
         toggleTodo(e);
       } else if (e.target.classList.contains('todo-text')) {
@@ -264,12 +245,12 @@ const AppCtrl = (function () {
     subTaskEvents(e);
 
     // Close modal events
-    todoModal.addEventListener('click', (e) => {
+    $on(todoModal, 'click', (e) => {
       if (e.target.classList.contains('modal')) UICtrl.closeModal('todoModal');
     });
-    todoModal
-      .querySelector('.close-modal-btn')
-      .addEventListener('click', () => UICtrl.closeModal('todoModal'));
+    $on($('.close-modal-btn', todoModal), 'click', (e) =>
+      UICtrl.closeModal('todoModal')
+    );
   };
 
   const toggleTodo = function (e) {
@@ -288,16 +269,14 @@ const AppCtrl = (function () {
   };
 
   const startEdit = function (e) {
-    const id = parseInt(e.target.parentElement.dataset.todo_id);
-
     const input = e.target;
     UICtrl.enableInput(input);
     // First remove event listeners from input if there are any
     input.removeEventListener('blur', completeEdit);
     input.removeEventListener('keyup', completeEdit);
     // Add event listeners for saving edit
-    input.addEventListener('blur', completeEdit);
-    input.addEventListener('keyup', completeEdit);
+    $on(input, 'blur', completeEdit);
+    $on(input, 'keyup', completeEdit);
   };
 
   const completeEdit = function (e) {
