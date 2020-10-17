@@ -73,7 +73,7 @@ const UICtrl = (function () {
 
   return {
     populateTodoList: function (todos, listToPopulate = 'todoList') {
-      const todoList = document.querySelector(UISelectors[listToPopulate]);
+      const todoList = $(UISelectors[listToPopulate]);
       // First clear todo list
       todoList.innerHTML = '';
       // Check if there are any todos on the current list
@@ -81,11 +81,12 @@ const UICtrl = (function () {
         ? // If there, append each to the html
           todos.forEach((todo) => todoList.appendChild(todoItem(todo)))
         : // If there are none display message Nothing todo...
-          (todoList.innerHTML =
-            '<h3 class="nothing-todo">Nothing todo...</h3>');
+          todoList.append(
+            $cl('h3', { class: 'nothing-todo' }, 'Nothing todo...')
+          );
     },
     populateProjectsList: function (projects) {
-      const projectList = document.querySelector(UISelectors.projectList);
+      const projectList = $(UISelectors.projectList);
       // First clear project list
       projectList.innerHTML = '';
       // Append each project to the html
@@ -94,46 +95,46 @@ const UICtrl = (function () {
       );
     },
     populateCommentsList: function (comments) {
-      const commentsList = document.querySelector(UISelectors.commentsList);
+      const commentsList = $(UISelectors.commentsList);
       comments.length
         ? comments.forEach((comment) =>
             commentsList.appendChild(commentItem(comment))
           )
-        : (commentsList.innerHTML =
-            '<h3 class="no-comments">No comments...</h3>');
+        : commentsList.append(
+            $cl('h3', { class: 'no-comments' }, 'No comments...')
+          );
     },
     getSelectors: function () {
       return UISelectors;
     },
     getTodoText: function (form = 'todoForm') {
-      return document.querySelector(UISelectors[form])['form-text'].value;
+      return $(UISelectors[form])['form-text'].value;
     },
     clearForm: function (formToClear) {
       // formToClear - todoForm, subTodoForm, newProjectForm
-      document.querySelector(UISelectors[formToClear])['form-text'].value = '';
+      $(UISelectors[formToClear])['form-text'].value = '';
     },
     addTodo: function (todo, todoList = 'todoList') {
-      const list = document.querySelector(UISelectors[todoList]);
-      list.appendChild(todoItem(todo));
+      $(UISelectors[todoList]).appendChild(todoItem(todo));
     },
     updateTodo: function (todo) {
-      const allTodos = document.querySelectorAll(UISelectors.todoListItem);
+      const allTodos = $$(UISelectors.todoListItem);
       allTodos.forEach((todoEl) => {
         if (parseInt(todoEl.dataset.todo_id) === todo.id) {
-          todoEl.querySelector('.todo-text').innerText = todo.text;
+          $('.todo-text', todoEl).innerText = todo.text;
         }
       });
     },
     addComment: function (commentObj) {
       const comment = commentItem(commentObj);
-      document.querySelector(UISelectors.commentsList).appendChild(comment);
+      $(UISelectors.commentsList).appendChild(comment);
     },
     deleteComment: function (id) {
-      const comment = document.querySelector(`[data-comment_id='${id}']`);
+      const comment = $(`[data-comment_id='${id}']`);
       comment.remove();
     },
     clearCommentForm: function () {
-      document.querySelector(UISelectors.commentsForm)['form-text'].value = '';
+      $(UISelectors.commentsForm)['form-text'].value = '';
     },
     enableInput: function (input) {
       input.disabled = false;
@@ -250,30 +251,27 @@ const UICtrl = (function () {
     },
     closeModal: function (modalToClose) {
       // modalToClose - todoModal, deleteModal
-      document.querySelector(UISelectors[modalToClose]).remove();
+      $(UISelectors[modalToClose]).remove();
     },
     removeTodo: function (id) {
-      const todo = document.querySelector(`[data-todo_id='${id}']`);
+      const todo = $(`[data-todo_id='${id}']`);
       todo.remove();
     },
     getNewProjectName: function () {
-      const newProjectForm = document.querySelector(UISelectors.newProjectForm);
+      const newProjectForm = $(UISelectors.newProjectForm);
       return newProjectForm['project-name'].value;
     },
     addProject: function (projectName) {
       const project = projectItem(projectName);
-      document.querySelector(UISelectors.projectList).appendChild(project);
+      $(UISelectors.projectList).appendChild(project);
     },
     clearNewProjectForm: function () {
-      document.querySelector(UISelectors.newProjectForm)['project-name'].value =
-        '';
+      $(UISelectors.newProjectForm)['project-name'].value = '';
     },
     changeProject: function (projectName) {
-      const projects = document.querySelectorAll(
-        UISelectors.projectItemWrapper
-      );
+      const projects = $$(UISelectors.projectItemWrapper);
       projects.forEach((project) => {
-        const div = project.querySelector('div');
+        const div = $('div', project);
         if (div.id === projectName) {
           div.classList.add('active');
         } else {
@@ -282,11 +280,9 @@ const UICtrl = (function () {
       });
     },
     removeProject: function (projectName) {
-      const projects = document.querySelectorAll(
-        UISelectors.projectItemWrapper
-      );
+      const projects = $$(UISelectors.projectItemWrapper);
       projects.forEach((project) => {
-        const div = project.querySelector('div');
+        const div = $('div', project);
         if (div.id === projectName) {
           project.remove();
         }

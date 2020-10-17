@@ -16,7 +16,7 @@
    *
    * @param {string} elToCreate HTML element name
    * @param {object} attributes Element attributes {class: 'container', id: '123', etc...}
-   * @param  {string | element} children String - text, element - another element
+   * @param  {string | element} children String - text, element - another element or text
    * @returns {element} Returns object
    */
   window.$cl = function (elToCreate, attributes, ...children) {
@@ -39,10 +39,6 @@
     });
 
     return element;
-  };
-
-  window.li = function (attr, ...children) {
-    return $cl('li', attr, ...children);
   };
 })(window);
 
