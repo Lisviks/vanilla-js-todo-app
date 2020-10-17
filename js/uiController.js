@@ -17,30 +17,19 @@ const UICtrl = (function () {
 
   // Todo html list item
   const todoItem = (todo) => {
-    const listItem = document.createElement('li');
-    listItem.classList = 'todo-list-item';
-    listItem.dataset.todo_id = todo.id;
-
-    const todoContent = document.createElement('div');
-    todoContent.classList = 'todo';
-
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.classList = 'checkbox';
-    checkbox.checked = todo.complete;
-
-    const todoText = document.createElement('span');
-    todoText.type = 'text';
-    todoText.classList = 'todo-text';
-    todoText.innerText = todo.text;
-    todoText.disabled = true;
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.classList = 'delete-btn';
-    deleteBtn.innerText = 'X';
-
-    todoContent.append(checkbox, todoText);
-    listItem.append(todoContent, deleteBtn);
+    const listItem = li(
+      { class: 'todo-list-item', ['data-todo_id']: todo.id },
+      div(
+        { class: 'todo' },
+        input({
+          type: 'checkbox',
+          class: 'checkbox',
+          checked: todo.complete,
+        }),
+        span({ class: 'todo-text' }, todo.text)
+      ),
+      button({ class: 'delete-btn' }, 'X')
+    );
 
     return listItem;
   };
@@ -49,56 +38,42 @@ const UICtrl = (function () {
   const projectItem = (project) => {
     // Capitalize first letter
     const projectTitle = project.charAt(0).toUpperCase() + project.slice(1);
-    const listItem = document.createElement('div');
-    listItem.id = project.toLowerCase();
-    listItem.classList =
-      project === 'inbox' ? 'navbar-item active' : 'navbar-item';
-    listItem.innerText = projectTitle;
 
-    const listItemDeleteBtn = document.createElement('button');
-    listItemDeleteBtn.classList = 'delete-btn';
-    listItemDeleteBtn.innerText = 'X';
-
-    const listItemWrapper = document.createElement('li');
-    listItemWrapper.classList = 'project-item-wrapper';
-
-    // Check if list is inbox or important, then don't add delete button
-    // Else add delete button
-    if (project === 'inbox' || project === 'important') {
-      listItemWrapper.append(listItem);
-    } else {
-      listItemWrapper.append(listItem, listItemDeleteBtn);
-    }
+    const listItemWrapper = li(
+      { class: 'project-item-wrapper' },
+      div(
+        {
+          id: project.toLowerCase(),
+          class: project === 'inbox' ? 'navbar-item active' : 'navbar-item',
+        },
+        projectTitle
+      ),
+      // Check if project is inbox or important,
+      // then don't add delete button
+      project !== 'important' &&
+        project !== 'inbox' &&
+        button({ class: 'delete-btn' }, 'X')
+    );
 
     return listItemWrapper;
   };
 
   const commentItem = function (comment) {
-    const listItem = document.createElement('li');
-    listItem.classList = 'comment-list-item';
-    listItem.dataset.comment_id = comment.id;
-
-    const commentContent = document.createElement('div');
-    commentContent.classList = 'comment';
-
-    const commentText = document.createElement('span');
-    commentText.type = 'text';
-    commentText.classList = 'comment-content';
-    commentText.innerText = comment.text;
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.classList = 'delete-btn';
-    deleteBtn.innerText = 'X';
-
-    commentContent.append(commentText);
-    listItem.append(commentContent, deleteBtn);
+    const listItem = li(
+      { class: 'comment-list-item', ['data-comment_id']: comment.id },
+      div(
+        { class: 'comment' },
+        span({ class: 'comment-content' }, comment.text)
+      ),
+      button({ class: 'delete-btn' }, 'X')
+    );
 
     return listItem;
   };
 
   return {
     populateTodoList: function (todos, listToPopulate = 'todoList') {
-      const todoList = document.querySelector(UISelectors[listToPopulate]);
+      const todoList = $(UISelectors[listToPopulate]);
       // First clear todo list
       todoList.innerHTML = '';
       // Check if there are any todos on the current list
@@ -106,11 +81,12 @@ const UICtrl = (function () {
         ? // If there, append each to the html
           todos.forEach((todo) => todoList.appendChild(todoItem(todo)))
         : // If there are none display message Nothing todo...
-          (todoList.innerHTML =
-            '<h3 class="nothing-todo">Nothing todo...</h3>');
+          todoList.append(
+            $cl('h3', { class: 'nothing-todo' }, 'Nothing todo...')
+          );
     },
     populateProjectsList: function (projects) {
-      const projectList = document.querySelector(UISelectors.projectList);
+      const projectList = $(UISelectors.projectList);
       // First clear project list
       projectList.innerHTML = '';
       // Append each project to the html
@@ -119,46 +95,46 @@ const UICtrl = (function () {
       );
     },
     populateCommentsList: function (comments) {
-      const commentsList = document.querySelector(UISelectors.commentsList);
+      const commentsList = $(UISelectors.commentsList);
       comments.length
         ? comments.forEach((comment) =>
             commentsList.appendChild(commentItem(comment))
           )
-        : (commentsList.innerHTML =
-            '<h3 class="no-comments">No comments...</h3>');
+        : commentsList.append(
+            $cl('h3', { class: 'no-comments' }, 'No comments...')
+          );
     },
     getSelectors: function () {
       return UISelectors;
     },
     getTodoText: function (form = 'todoForm') {
-      return document.querySelector(UISelectors[form])['form-text'].value;
+      return $(UISelectors[form])['form-text'].value;
     },
     clearForm: function (formToClear) {
       // formToClear - todoForm, subTodoForm, newProjectForm
-      document.querySelector(UISelectors[formToClear])['form-text'].value = '';
+      $(UISelectors[formToClear])['form-text'].value = '';
     },
     addTodo: function (todo, todoList = 'todoList') {
-      const list = document.querySelector(UISelectors[todoList]);
-      list.appendChild(todoItem(todo));
+      $(UISelectors[todoList]).appendChild(todoItem(todo));
     },
     updateTodo: function (todo) {
-      const allTodos = document.querySelectorAll(UISelectors.todoListItem);
+      const allTodos = $$(UISelectors.todoListItem);
       allTodos.forEach((todoEl) => {
         if (parseInt(todoEl.dataset.todo_id) === todo.id) {
-          todoEl.querySelector('.todo-text').innerText = todo.text;
+          $('.todo-text', todoEl).innerText = todo.text;
         }
       });
     },
     addComment: function (commentObj) {
       const comment = commentItem(commentObj);
-      document.querySelector(UISelectors.commentsList).appendChild(comment);
+      $(UISelectors.commentsList).appendChild(comment);
     },
     deleteComment: function (id) {
-      const comment = document.querySelector(`[data-comment_id='${id}']`);
+      const comment = $(`[data-comment_id='${id}']`);
       comment.remove();
     },
     clearCommentForm: function () {
-      document.querySelector(UISelectors.commentsForm)['form-text'].value = '';
+      $(UISelectors.commentsForm)['form-text'].value = '';
     },
     enableInput: function (input) {
       input.disabled = false;
@@ -171,161 +147,131 @@ const UICtrl = (function () {
       return input.value;
     },
     deleteConfirmModal: function (itemToDeleteText) {
-      const modal = document.createElement('div');
-      modal.classList = 'modal delete-modal';
-      const modalContent = document.createElement('div');
-      modalContent.classList = 'modal-content';
-      const message = document.createElement('p');
-      message.innerText = `Are you sure you want to delete "${itemToDeleteText}"?`;
-      const dialogActions = document.createElement('div');
-      dialogActions.classList = 'dialog-actions';
-      const cancelBtn = document.createElement('button');
-      cancelBtn.classList = 'modal-cancel-btn btn';
-      cancelBtn.innerText = 'Cancel';
-      const deleteBtn = document.createElement('button');
-      deleteBtn.classList = 'modal-delete-btn btn';
-      deleteBtn.innerText = 'Delete';
+      const modal = div(
+        { class: 'modal delete-modal' },
+        div(
+          { class: 'modal-content' },
+          p({}, `Are you sure you want to delete "${itemToDeleteText}"?`),
+          div(
+            { class: 'dialog-actions' },
+            button({ class: 'modal-cancel-btn btn' }, 'Cancel'),
+            button({ class: 'modal-delete-btn btn' }, 'Delete')
+          )
+        )
+      );
 
-      dialogActions.append(cancelBtn, deleteBtn);
-      modalContent.append(message, dialogActions);
-      modal.appendChild(modalContent);
-
-      document.querySelector('body').appendChild(modal);
+      $('body').appendChild(modal);
 
       return modal;
     },
     subTasksTab: function () {
-      const subTodoTabContent = document.createElement('div');
-      subTodoTabContent.classList = 'sub-todo-tab-content';
-
-      const todoList = document.createElement('ul');
-      todoList.classList = 'todo-list';
-      todoList.id = 'sub-todo-list';
-
-      const todoForm = document.createElement('form');
-      todoForm.classList = 'todo-form';
-      todoForm.id = 'sub-todo-form';
-      const inputField = document.createElement('div');
-      inputField.classList = 'input-field';
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.classList = 'todo-text';
-      input.id = 'form-text';
-      input.autocomplete = false;
-      const submitBtn = document.createElement('button');
-      submitBtn.type = 'submit';
-      submitBtn.classList = 'add-btn btn';
-      submitBtn.innerText = 'Add Task';
-
-      inputField.appendChild(input);
-      todoForm.append(inputField, submitBtn);
-      subTodoTabContent.append(todoList, todoForm);
+      const subTodoTabContent = div(
+        { class: 'sub-todo-tab-content' },
+        ul({ class: 'todo-list', id: 'sub-todo-list' }),
+        form(
+          { class: 'todo-form', id: 'sub-todo-form' },
+          div(
+            { class: 'input-field' },
+            input({
+              type: 'text',
+              class: 'todo-text',
+              id: 'form-text',
+              autocomplete: 'off',
+            })
+          ),
+          button({ type: 'submit', class: 'add-btn btn' }, 'Add Task')
+        )
+      );
 
       return subTodoTabContent;
     },
     commentsTab: function () {
-      const commentsTabContent = document.createElement('div');
-      commentsTabContent.classList = 'comments-tab-content';
-
-      const comments = document.createElement('ul');
-      comments.classList = 'comments-list';
-
-      const commentsForm = document.createElement('form');
-      commentsForm.classList = 'comments-form';
-      const inputField = document.createElement('div');
-      inputField.classList = 'input-field';
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.classList = 'comment-text';
-      input.id = 'form-text';
-      input.autocomplete = false;
-      const submitBtn = document.createElement('button');
-      submitBtn.type = 'submit';
-      submitBtn.classList = 'add-btn btn';
-      submitBtn.innerText = 'Add Comment';
-
-      inputField.appendChild(input);
-      commentsForm.append(inputField, submitBtn);
-      commentsTabContent.append(comments, commentsForm);
+      const commentsTabContent = div(
+        { class: 'comments-tab-content' },
+        ul({ class: 'comments-list' }),
+        form(
+          { class: 'comments-form' },
+          div(
+            { class: 'input-field' },
+            input({
+              type: 'text',
+              class: 'comment-text',
+              id: 'form-text',
+              autocomplete: 'off',
+            })
+          ),
+          button({ type: 'submit', class: 'add-btn btn' }, 'Add Comment')
+        )
+      );
 
       return commentsTabContent;
     },
     todoModal: function (todo, currentProject, tab) {
-      const modal = document.createElement('div');
-      modal.classList = 'modal todo-modal';
-      const modalContent = document.createElement('div');
-      modalContent.classList = 'modal-content';
+      const modal = div(
+        { class: 'modal todo-modal' },
+        div(
+          { class: 'modal-content' },
+          div(
+            { class: 'todo-modal-header' },
+            span(
+              {},
+              currentProject.charAt(0).toUpperCase() + currentProject.slice(1)
+            ),
+            button({ class: 'close-modal-btn' }, 'X')
+          ),
+          div(
+            { class: 'todo', ['data-todo_id']: todo.id },
+            input({
+              type: 'checkbox',
+              class: 'checkbox',
+              checked: todo.complete,
+            }),
+            input({
+              type: 'text',
+              class: 'todo-text',
+              value: todo.text,
+              disabled: true,
+            })
+          ),
+          div(
+            { class: 'todo-modal-tab-list' },
+            button(
+              { class: 'todo-modal-sub-tasks-tab tab-btn active' },
+              'Sub-tasks'
+            ),
+            button({ class: 'todo-modal-comments-tab tab-btn' }, 'Comments')
+          ),
+          div({ class: 'tab-content' }, tab)
+        )
+      );
 
-      const header = document.createElement('div');
-      header.classList = 'todo-modal-header';
-      const todoProject = document.createElement('span');
-      todoProject.innerText =
-        currentProject.charAt(0).toUpperCase() + currentProject.slice(1);
-      const closeBtn = document.createElement('button');
-      closeBtn.classList = 'close-modal-btn';
-      closeBtn.innerText = 'X';
-
-      const todoContent = document.createElement('div');
-      todoContent.classList = 'todo';
-      todoContent.dataset.todo_id = todo.id;
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.classList = 'checkbox';
-      checkbox.checked = todo.complete;
-      const todoText = document.createElement('input');
-      todoText.type = 'text';
-      todoText.classList = 'todo-text';
-      todoText.value = todo.text;
-      todoText.disabled = true;
-
-      const tabList = document.createElement('div');
-      tabList.classList = 'todo-modal-tab-list';
-      const subTasks = document.createElement('button');
-      subTasks.classList = 'todo-modal-sub-tasks-tab tab-btn active';
-      subTasks.innerText = 'Sub-tasks';
-      const comments = document.createElement('button');
-      comments.classList = 'todo-modal-comments-tab tab-btn';
-      comments.innerText = 'Comments';
-      const tabContent = document.createElement('div');
-      tabContent.classList = 'tab-content';
-
-      header.append(todoProject, closeBtn);
-      todoContent.append(checkbox, todoText);
-      tabList.append(subTasks, comments);
-      tabContent.appendChild(tab);
-      modalContent.append(header, todoContent, tabList, tabContent);
-      modal.appendChild(modalContent);
-
-      document.querySelector('body').appendChild(modal);
+      $('body').appendChild(modal);
 
       return modal;
     },
     closeModal: function (modalToClose) {
       // modalToClose - todoModal, deleteModal
-      document.querySelector(UISelectors[modalToClose]).remove();
+      $(UISelectors[modalToClose]).remove();
     },
     removeTodo: function (id) {
-      const todo = document.querySelector(`[data-todo_id='${id}']`);
+      const todo = $(`[data-todo_id='${id}']`);
       todo.remove();
     },
     getNewProjectName: function () {
-      const newProjectForm = document.querySelector(UISelectors.newProjectForm);
+      const newProjectForm = $(UISelectors.newProjectForm);
       return newProjectForm['project-name'].value;
     },
     addProject: function (projectName) {
       const project = projectItem(projectName);
-      document.querySelector(UISelectors.projectList).appendChild(project);
+      $(UISelectors.projectList).appendChild(project);
     },
     clearNewProjectForm: function () {
-      document.querySelector(UISelectors.newProjectForm)['project-name'].value =
-        '';
+      $(UISelectors.newProjectForm)['project-name'].value = '';
     },
     changeProject: function (projectName) {
-      const projects = document.querySelectorAll(
-        UISelectors.projectItemWrapper
-      );
+      const projects = $$(UISelectors.projectItemWrapper);
       projects.forEach((project) => {
-        const div = project.querySelector('div');
+        const div = $('div', project);
         if (div.id === projectName) {
           div.classList.add('active');
         } else {
@@ -334,11 +280,9 @@ const UICtrl = (function () {
       });
     },
     removeProject: function (projectName) {
-      const projects = document.querySelectorAll(
-        UISelectors.projectItemWrapper
-      );
+      const projects = $$(UISelectors.projectItemWrapper);
       projects.forEach((project) => {
-        const div = project.querySelector('div');
+        const div = $('div', project);
         if (div.id === projectName) {
           project.remove();
         }
