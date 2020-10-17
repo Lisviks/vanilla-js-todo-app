@@ -48,7 +48,7 @@
 
 // Global functions for creating html elements
 (function (window) {
-  const elements = ['div', 'span', 'li', 'input', 'button'];
+  const elements = ['div', 'span', 'ul', 'li', 'input', 'button', 'p', 'form'];
 
   elements.forEach((el) => {
     window[el] = function (attr, ...children) {

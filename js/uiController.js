@@ -146,132 +146,105 @@ const UICtrl = (function () {
       return input.value;
     },
     deleteConfirmModal: function (itemToDeleteText) {
-      const modal = document.createElement('div');
-      modal.classList = 'modal delete-modal';
-      const modalContent = document.createElement('div');
-      modalContent.classList = 'modal-content';
-      const message = document.createElement('p');
-      message.innerText = `Are you sure you want to delete "${itemToDeleteText}"?`;
-      const dialogActions = document.createElement('div');
-      dialogActions.classList = 'dialog-actions';
-      const cancelBtn = document.createElement('button');
-      cancelBtn.classList = 'modal-cancel-btn btn';
-      cancelBtn.innerText = 'Cancel';
-      const deleteBtn = document.createElement('button');
-      deleteBtn.classList = 'modal-delete-btn btn';
-      deleteBtn.innerText = 'Delete';
+      const modal = div(
+        { class: 'modal delete-modal' },
+        div(
+          { class: 'modal-content' },
+          p({}, `Are you sure you want to delete "${itemToDeleteText}"?`),
+          div(
+            { class: 'dialog-actions' },
+            button({ class: 'modal-cancel-btn btn' }, 'Cancel'),
+            button({ class: 'modal-delete-btn btn' }, 'Delete')
+          )
+        )
+      );
 
-      dialogActions.append(cancelBtn, deleteBtn);
-      modalContent.append(message, dialogActions);
-      modal.appendChild(modalContent);
-
-      document.querySelector('body').appendChild(modal);
+      $('body').appendChild(modal);
 
       return modal;
     },
     subTasksTab: function () {
-      const subTodoTabContent = document.createElement('div');
-      subTodoTabContent.classList = 'sub-todo-tab-content';
-
-      const todoList = document.createElement('ul');
-      todoList.classList = 'todo-list';
-      todoList.id = 'sub-todo-list';
-
-      const todoForm = document.createElement('form');
-      todoForm.classList = 'todo-form';
-      todoForm.id = 'sub-todo-form';
-      const inputField = document.createElement('div');
-      inputField.classList = 'input-field';
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.classList = 'todo-text';
-      input.id = 'form-text';
-      input.autocomplete = false;
-      const submitBtn = document.createElement('button');
-      submitBtn.type = 'submit';
-      submitBtn.classList = 'add-btn btn';
-      submitBtn.innerText = 'Add Task';
-
-      inputField.appendChild(input);
-      todoForm.append(inputField, submitBtn);
-      subTodoTabContent.append(todoList, todoForm);
+      const subTodoTabContent = div(
+        { class: 'sub-todo-tab-content' },
+        ul({ class: 'todo-list', id: 'sub-todo-list' }),
+        form(
+          { class: 'todo-form', id: 'sub-todo-form' },
+          div(
+            { class: 'input-field' },
+            input({
+              type: 'text',
+              class: 'todo-text',
+              id: 'form-text',
+              autocomplete: 'off',
+            })
+          ),
+          button({ type: 'submit', class: 'add-btn btn' }, 'Add Task')
+        )
+      );
 
       return subTodoTabContent;
     },
     commentsTab: function () {
-      const commentsTabContent = document.createElement('div');
-      commentsTabContent.classList = 'comments-tab-content';
-
-      const comments = document.createElement('ul');
-      comments.classList = 'comments-list';
-
-      const commentsForm = document.createElement('form');
-      commentsForm.classList = 'comments-form';
-      const inputField = document.createElement('div');
-      inputField.classList = 'input-field';
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.classList = 'comment-text';
-      input.id = 'form-text';
-      input.autocomplete = false;
-      const submitBtn = document.createElement('button');
-      submitBtn.type = 'submit';
-      submitBtn.classList = 'add-btn btn';
-      submitBtn.innerText = 'Add Comment';
-
-      inputField.appendChild(input);
-      commentsForm.append(inputField, submitBtn);
-      commentsTabContent.append(comments, commentsForm);
+      const commentsTabContent = div(
+        { class: 'comments-tab-content' },
+        ul({ class: 'comments-list' }),
+        form(
+          { class: 'comments-form' },
+          div(
+            { class: 'input-field' },
+            input({
+              type: 'text',
+              class: 'comment-text',
+              id: 'form-text',
+              autocomplete: 'off',
+            })
+          ),
+          button({ type: 'submit', class: 'add-btn btn' }, 'Add Comment')
+        )
+      );
 
       return commentsTabContent;
     },
     todoModal: function (todo, currentProject, tab) {
-      const modal = document.createElement('div');
-      modal.classList = 'modal todo-modal';
-      const modalContent = document.createElement('div');
-      modalContent.classList = 'modal-content';
+      const modal = div(
+        { class: 'modal todo-modal' },
+        div(
+          { class: 'modal-content' },
+          div(
+            { class: 'todo-modal-header' },
+            span(
+              {},
+              currentProject.charAt(0).toUpperCase() + currentProject.slice(1)
+            ),
+            button({ class: 'close-modal-btn' }, 'X')
+          ),
+          div(
+            { class: 'todo', ['data-todo_id']: todo.id },
+            input({
+              type: 'checkbox',
+              class: 'checkbox',
+              checked: todo.complete,
+            }),
+            input({
+              type: 'text',
+              class: 'todo-text',
+              value: todo.text,
+              disabled: true,
+            })
+          ),
+          div(
+            { class: 'todo-modal-tab-list' },
+            button(
+              { class: 'todo-modal-sub-tasks-tab tab-btn active' },
+              'Sub-tasks'
+            ),
+            button({ class: 'todo-modal-comments-tab tab-btn' }, 'Comments')
+          ),
+          div({ class: 'tab-content' }, tab)
+        )
+      );
 
-      const header = document.createElement('div');
-      header.classList = 'todo-modal-header';
-      const todoProject = document.createElement('span');
-      todoProject.innerText =
-        currentProject.charAt(0).toUpperCase() + currentProject.slice(1);
-      const closeBtn = document.createElement('button');
-      closeBtn.classList = 'close-modal-btn';
-      closeBtn.innerText = 'X';
-
-      const todoContent = document.createElement('div');
-      todoContent.classList = 'todo';
-      todoContent.dataset.todo_id = todo.id;
-      const checkbox = document.createElement('input');
-      checkbox.type = 'checkbox';
-      checkbox.classList = 'checkbox';
-      checkbox.checked = todo.complete;
-      const todoText = document.createElement('input');
-      todoText.type = 'text';
-      todoText.classList = 'todo-text';
-      todoText.value = todo.text;
-      todoText.disabled = true;
-
-      const tabList = document.createElement('div');
-      tabList.classList = 'todo-modal-tab-list';
-      const subTasks = document.createElement('button');
-      subTasks.classList = 'todo-modal-sub-tasks-tab tab-btn active';
-      subTasks.innerText = 'Sub-tasks';
-      const comments = document.createElement('button');
-      comments.classList = 'todo-modal-comments-tab tab-btn';
-      comments.innerText = 'Comments';
-      const tabContent = document.createElement('div');
-      tabContent.classList = 'tab-content';
-
-      header.append(todoProject, closeBtn);
-      todoContent.append(checkbox, todoText);
-      tabList.append(subTasks, comments);
-      tabContent.appendChild(tab);
-      modalContent.append(header, todoContent, tabList, tabContent);
-      modal.appendChild(modalContent);
-
-      document.querySelector('body').appendChild(modal);
+      $('body').appendChild(modal);
 
       return modal;
     },
