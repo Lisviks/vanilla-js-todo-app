@@ -24,6 +24,10 @@
 
     for (const prop in attributes) {
       element.setAttribute(prop, attributes[prop]);
+      // If checkbox is not checked remove 'checked' attribute
+      if (prop === 'checked' && !attributes[prop]) {
+        element.removeAttribute(prop);
+      }
     }
 
     children.forEach((child) => {
@@ -36,4 +40,19 @@
 
     return element;
   };
+
+  window.li = function (attr, ...children) {
+    return $cl('li', attr, ...children);
+  };
+})(window);
+
+// Global functions for creating html elements
+(function (window) {
+  const elements = ['div', 'span', 'li', 'input', 'button'];
+
+  elements.forEach((el) => {
+    window[el] = function (attr, ...children) {
+      return $cl(el, attr, ...children);
+    };
+  });
 })(window);

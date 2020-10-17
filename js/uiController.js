@@ -17,30 +17,19 @@ const UICtrl = (function () {
 
   // Todo html list item
   const todoItem = (todo) => {
-    const listItem = document.createElement('li');
-    listItem.classList = 'todo-list-item';
-    listItem.dataset.todo_id = todo.id;
-
-    const todoContent = document.createElement('div');
-    todoContent.classList = 'todo';
-
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.classList = 'checkbox';
-    checkbox.checked = todo.complete;
-
-    const todoText = document.createElement('span');
-    todoText.type = 'text';
-    todoText.classList = 'todo-text';
-    todoText.innerText = todo.text;
-    todoText.disabled = true;
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.classList = 'delete-btn';
-    deleteBtn.innerText = 'X';
-
-    todoContent.append(checkbox, todoText);
-    listItem.append(todoContent, deleteBtn);
+    const listItem = li(
+      { class: 'todo-list-item', ['data-todo_id']: todo.id },
+      div(
+        { class: 'todo' },
+        input({
+          type: 'checkbox',
+          class: 'checkbox',
+          checked: todo.complete,
+        }),
+        span({ class: 'todo-text' }, todo.text)
+      ),
+      button({ class: 'delete-btn' }, 'X')
+    );
 
     return listItem;
   };
@@ -49,49 +38,35 @@ const UICtrl = (function () {
   const projectItem = (project) => {
     // Capitalize first letter
     const projectTitle = project.charAt(0).toUpperCase() + project.slice(1);
-    const listItem = document.createElement('div');
-    listItem.id = project.toLowerCase();
-    listItem.classList =
-      project === 'inbox' ? 'navbar-item active' : 'navbar-item';
-    listItem.innerText = projectTitle;
 
-    const listItemDeleteBtn = document.createElement('button');
-    listItemDeleteBtn.classList = 'delete-btn';
-    listItemDeleteBtn.innerText = 'X';
-
-    const listItemWrapper = document.createElement('li');
-    listItemWrapper.classList = 'project-item-wrapper';
-
-    // Check if list is inbox or important, then don't add delete button
-    // Else add delete button
-    if (project === 'inbox' || project === 'important') {
-      listItemWrapper.append(listItem);
-    } else {
-      listItemWrapper.append(listItem, listItemDeleteBtn);
-    }
+    const listItemWrapper = li(
+      { class: 'project-item-wrapper' },
+      div(
+        {
+          id: project.toLowerCase(),
+          class: project === 'inbox' ? 'navbar-item active' : 'navbar-item',
+        },
+        projectTitle
+      ),
+      // Check if project is inbox or important,
+      // then don't add delete button
+      project !== 'important' &&
+        project !== 'inbox' &&
+        button({ class: 'delete-btn' }, 'X')
+    );
 
     return listItemWrapper;
   };
 
   const commentItem = function (comment) {
-    const listItem = document.createElement('li');
-    listItem.classList = 'comment-list-item';
-    listItem.dataset.comment_id = comment.id;
-
-    const commentContent = document.createElement('div');
-    commentContent.classList = 'comment';
-
-    const commentText = document.createElement('span');
-    commentText.type = 'text';
-    commentText.classList = 'comment-content';
-    commentText.innerText = comment.text;
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.classList = 'delete-btn';
-    deleteBtn.innerText = 'X';
-
-    commentContent.append(commentText);
-    listItem.append(commentContent, deleteBtn);
+    const listItem = li(
+      { class: 'comment-list-item', ['data-comment_id']: comment.id },
+      div(
+        { class: 'comment' },
+        span({ class: 'comment-content' }, comment.text)
+      ),
+      button({ class: 'delete-btn' }, 'X')
+    );
 
     return listItem;
   };
